@@ -13,16 +13,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-model User{
-  id String @id @db.VarChar(100)
-  password String @db.VarChar(100)
-  name String @db.VarChar(100)
-  address String? @db.Text
-  img_url String? @db.VarChar(100)
+// User model (existing)
+model User {
+  id          String   @id @db.VarChar(100)
+  password    String   @db.VarChar(100)
+  name        String   @db.VarChar(100)
+  address     String?  @db.Text
+  img_url     String?  @db.VarChar(100)
   phone_number String? @db.VarChar(20)
-  token String? @db.VarChar(100)
-
+  token       String?  @db.VarChar(100)
 
   @@map("users")
+}
+
+model Product {
+  id          String   @id @default(uuid()) @db.VarChar(100)
+  name        String   @db.VarChar(100)
+  description String   @db.Text
+  price       Float    @db.Float
+  stock       Int      @db.Int
+  sold        Int      @db.Int @default(0)
+  seen        Int      @db.Int @default(0)
+  favorite    Int      @db.Int @default(0)
+  type        Int      @db.Int
+  images_url  Json     // Store image URLs as a JSON array
+  tags        Json     // Store tags as a JSON array
+  size        Json     // Store size options as a JSON array
+
+  @@map("products")
 }
