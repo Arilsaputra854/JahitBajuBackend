@@ -15,13 +15,16 @@ datasource db {
 
 // User model (existing)
 model User {
-  id          String   @id @db.VarChar(100)
-  password    String   @db.VarChar(100)
-  name        String   @db.VarChar(100)
-  address     String?  @db.Text
-  img_url     String?  @db.VarChar(100)
-  phone_number String? @db.VarChar(20)
-  token       String?  @db.VarChar(100)
+  id          String    @id @default(uuid())
+  email       String    @unique
+  password    String    @db.VarChar(100)
+  name        String    @db.VarChar(100)
+  address     String?   @db.Text
+  img_url     String?   @db.VarChar(100)
+  phone_number String?  @db.VarChar(20)
+  token       String?   @db.VarChar(100)
+  
+  orders      Order[]   @relation("UserOrders") // Relasi One-to-Many ke Order
 
   @@map("users")
 }
@@ -41,4 +44,36 @@ model Product {
   size        Json     // Store size options as a JSON array
 
   @@map("products")
+}
+
+model Order {
+  id          String    @id @default(uuid()) @db.VarChar(100)
+  buyerId     String    @db.VarChar(100) // Foreign Key ke User
+  buyer       User      @relation(fields: [buyerId], references: [id], name: "UserOrders")
+  orderDate   DateTime  @db.Timestamp(6)
+  totalPrice  Float     @db.Float
+  status      String    @default("pending") @db.VarChar(50) // Status pesanan
+  items       OrderItem[]  // Relasi One-to-Many ke OrderItem
+  
+  createdAt   DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime  @updatedAt @db.Timestamp(6)
+
+  @@map("orders")
+}
+
+
+model OrderItem {
+  id                String   @id @default(uuid()) @db.VarChar(100)
+  orderId           String   @db.VarChar(100) // Foreign Key ke Order
+  productId         String   @db.VarChar(100) // Foreign Key ke Product
+  quantity          Int      @default(1)
+  priceAtPurchase   Float    @db.Float        // Harga saat pembelian
+  status            String   @default("pending") @db.VarChar(50) // Status item
+  
+  order             Order    @relation(fields: [orderId], references: [id])
+  
+  createdAt         DateTime @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime @updatedAt @db.Timestamp(6)
+
+  @@map("order_items")
 }

@@ -40,7 +40,9 @@ const remove = async (req, res, next) => {
     try {
         const { id } = req.params;
         await productService.remove(id);
-        res.status(204).send(); // No content
+        res.status(200).json({
+            data : "Product delete successfuly"
+        })
     } catch (e) {
         next(e);
     }
