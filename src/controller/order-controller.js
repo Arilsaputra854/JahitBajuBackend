@@ -1,46 +1,33 @@
 import orderService from "../service/order-service.js";
-import { validateOrderItem } from "../validation/order-validation.js";
 import { validateOrder } from "../validation/order-validation.js";
+import { validate } from "../validation/validation.js";
 
+// Create Order
 const createOrder = async (req, res, next) => {
     try {
-        // Validasi request body menggunakan Joi
-        const { error } = validateOrder(req.body);
-        if (error) {
-            return res.status(400).json({ message: error.details[0].message });
-        }
-
-        // Ambil buyerId dari user yang sedang login
-        const buyerId = req.user.id; // Pastikan middleware menambahkan `req.user`
-
-        // Hitung totalPrice berdasarkan item
-        const totalPrice = req.body.items.reduce((sum, item) => {
-            return sum + (item.quantity * item.priceAtPurchase);
-        }, 0);
-
-        // Tambahkan buyerId dan totalPrice ke request body
-        const orderData = { ...req.body, totalPrice, buyerId };
-
+       const body = validate(validateOrder,req.body);
+        
         // Call orderService untuk membuat order dengan data lengkap
-        const result = await orderService.createOrder(orderData);
+        const result = await orderService.createOrder(body,req.user.id, req.user.email);
 
         // Mengirimkan response dengan data order yang berhasil dibuat
         res.status(201).json({
-            data: result
+            error: false,
+            data: result,
         });
     } catch (e) {
         next(e); // Mengoper error ke middleware penanganan error
     }
 };
 
-
 // Get Order by ID
 const getOrder = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const result = await orderService.getOrder(id);
+        const { buyerId } = req.body;
+        const result = await orderService.getOrder(buyerId);
         res.status(200).json({
-            data: result
+            error: false,
+            data: result,
         });
     } catch (e) {
         next(e);
@@ -49,27 +36,26 @@ const getOrder = async (req, res, next) => {
 
 // Update Order
 const updateOrder = async (req, res, next) => {
-     try {
-
-        const {id} = req.params
+    try {
+        const { id } = req.params;
 
         const { error } = validateOrderItem(req.body);
-
         if (error) {
-            return res.status(400).json({ message: error.details[0].message });
+            return res.status(400).json({ error: true, message: error.details[0].message });
         }
 
         const body = req.body;
 
         // Panggil service untuk update status
-        const result = await orderService.updateOrder(id,body);
+        const result = await orderService.updateOrder(id, body);
 
         res.status(200).json({
-            message: "Order item status updated successfully",
-            data: result
+            error: false,
+            message: "Order updated successfully",
+            data: result,
         });
     } catch (e) {
-        next(e); // Pass error to middleware
+        next(e);
     }
 };
 
@@ -79,7 +65,22 @@ const removeOrder = async (req, res, next) => {
         const { id } = req.params;
         await orderService.removeOrder(id);
         res.status(200).json({
-            message: "Order deleted successfully"
+            error: false,
+            message: "Order deleted successfully",
+        });
+    } catch (e) {
+        next(e);
+    }
+};
+
+// Remove Order Items
+const removeOrderItem = async (req, res, next) => {
+    try {
+        const { orderId, itemId } = req.params;
+        await orderService.removeOrderItem(orderId, itemId);
+        res.status(200).json({
+            error: false,
+            message: "Order item deleted successfully",
         });
     } catch (e) {
         next(e);
@@ -91,7 +92,8 @@ const listOrders = async (req, res, next) => {
     try {
         const result = await orderService.listOrders();
         res.status(200).json({
-            data: result
+            error: false,
+            data: result,
         });
     } catch (e) {
         next(e);
@@ -103,5 +105,6 @@ export default {
     getOrder,
     updateOrder,
     removeOrder,
-    listOrders
+    removeOrderItem,
+    listOrders,
 };

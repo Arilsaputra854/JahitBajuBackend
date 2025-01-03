@@ -13,6 +13,31 @@
             "database": "jahitbaju",
             "username": "root",
             "password": ""
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "203.175.9.104",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "jahit baju server",
+            "database": "jahr4832_jahitbaju",
+            "username": "jahr4832_app",
+            "askForPassword": true
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "MySQL",
+            "connectString": "mysql://root:Arilsaputra854@34.101.46.128:3306/jahitbaju?socket=/cloudsql/ramean-kata-toti:asia-southeast2:jahitbajuapp",
+            "name": "Jahit Baju GCP"
         }
     ]
 }

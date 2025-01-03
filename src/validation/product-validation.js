@@ -10,8 +10,10 @@ const registerProductValidation = Joi.object({
     favorite: Joi.number().integer().min(0).optional(),
     type: Joi.number().integer().min(0).required(),
     images_url: Joi.array().items(Joi.string().uri()).required(), // Update for array of URLs
-    tags: Joi.array().items(Joi.string().max(50)).optional(), // Tags as array of strings
-    size: Joi.array().items(Joi.string().valid("XS", "S", "M", "L", "XL", "XXL", "ALL SIZE")).optional()
+    tags: Joi.array().items(Joi.string().max(50)).required(),
+    size: Joi.array().items(Joi.string().valid("XS", "S", "M", "L", "XL", "XXL", "ALL SIZE")).required(),
+    colors: Joi.array().items(Joi.string().max(50)).optional(),
+    features: Joi.array().items(Joi.string().max(50)).optional(),
 });
 
 const getProductValidation = Joi.string().max(100).required();
@@ -27,7 +29,9 @@ const updateProductValidation = Joi.object({
     type: Joi.number().integer().min(0).optional(),
     images_url: Joi.array().items(Joi.string().uri()).optional(),
     tags: Joi.array().items(Joi.string().max(50)).optional(),
-    size: Joi.array().items(Joi.string().valid("XS", "S", "M", "L", "XL", "XXL", "ALL SIZE")).optional()
+    size: Joi.array().items(Joi.string().valid("XS", "S", "M", "L", "XL", "XXL", "ALL SIZE")).optional(),
+    colors: Joi.array().items(Joi.string().max(50)).optional(),
+    features: Joi.array().items(Joi.string().max(50)).optional(),
 });
 
 

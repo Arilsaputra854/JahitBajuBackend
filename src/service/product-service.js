@@ -5,13 +5,13 @@ import { validate } from "../validation/validation.js";
 import { v4 as uuid } from 'uuid';
 
 const register = async (request) => {
-    // Validate product data using the registerProductValidation
+    
     const productData = validate(registerProductValidation, request);
 
     return prismaClient.product.create({
         data: {
             ...productData,
-            id: uuid(), // Generating a unique ID for the product
+            id: uuid(), 
         },
         select: {
             id: true,
@@ -23,9 +23,11 @@ const register = async (request) => {
             seen: true,
             favorite: true,
             type: true,
-            images_url: true, // Ensure this is correctly stored as an array
+            images_url: true,
             tags: true,
-            size: true
+            size: true,
+            colors : true,
+            features : true,
         }
     });
 };
@@ -50,7 +52,9 @@ const get = async (id) => {
             type: true,
             images_url: true, // Ensure this is fetched as an array
             tags: true,
-            size: true
+            size: true,
+            colors : true,
+            features : true,
         }
     });
 
@@ -85,7 +89,9 @@ const update = async (id, request) => {
             type: true,
             images_url: true,
             tags: true,
-            size: true
+            size: true,
+            colors : true,
+            features : true,
         }
     });
 };
@@ -106,7 +112,7 @@ const remove = async (id) => {
 };
 
 const list = async () => {
-    return prismaClient.product.findMany({
+    const products = await prismaClient.product.findMany({
         select: {
             id: true,
             name: true,
@@ -119,10 +125,16 @@ const list = async () => {
             type: true,
             images_url: true,
             tags: true,
-            size: true
+            size: true,
+            colors: true,
+            features: true,
         }
     });
-};
+  
+    console.log(products); // Log the result to see the structure
+    return products;
+  };
+  
 
 export default {
     register,

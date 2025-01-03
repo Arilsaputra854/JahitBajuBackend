@@ -2,6 +2,7 @@ import { response } from "express";
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 import { getUserValidation, loginUserValidation, registerUserValidation, updateUserValidation } from "../validation/user-validation.js"
+import { generateAndSendOTP,validateOTP} from "../service/otp-service.js"
 import { validate } from "../validation/validation.js"
 import bcrypt from "bcrypt"
 import { v4 as uuid } from "uuid";
@@ -28,48 +29,92 @@ const register = async(request)=>{
             name : true,
             address : true,
             phone_number : true,
+            email_verified : true,
             img_url : true
         }
     })
 }
 
-const login = async (request) =>{
+const login = async (request) => {
     var loginRequest = validate(loginUserValidation, request);
-
+  
     const user = await prismaClient.user.findUnique({
-        where :{
-            email : loginRequest.email
-        },
-        select : {
-            email : true,
-            password : true
-        }
-    })
-
-    if(!user){
-        throw new ResponseError(401,"User not found")
+      where: {
+        email: loginRequest.email,
+      },
+      select: {
+        email: true,
+        password: true,
+        email_verified: true,
+        id: true, // Tambahkan ID untuk mengirim OTP
+      },
+    });
+  
+    if (!user) {
+      throw new ResponseError(401, "User not found");
     }
-
-    const isPasswordValid = await bcrypt.compare(loginRequest.password, user.password)
-
-    if(!isPasswordValid){
-        throw new ResponseError(401,"Email or password is invalid")
+  
+    const isPasswordValid = await bcrypt.compare(
+      loginRequest.password,
+      user.password
+    );
+  
+    if (!isPasswordValid) {
+      throw new ResponseError(401, "Email or password is invalid");
     }
+  
+    const token = uuid().toString();
+    await prismaClient.user.update({
+      data: {
+        token: token,
+      },
+      where: {
+        email: user.email,
+      },
+    });
+  
+    // // Jika email belum diverifikasi, kirim OTP
+    // if (!user.email_verified) {
+    //   await generateAndSendOTP(user.id, user.email);
+    // }
+  
+    return {
+      token,
+    //   email_verified: user.email_verified, // Tambahkan status verifikasi
+    };
+  };
 
-    const token = uuid().toString()
-    return await prismaClient.user.update({
-        data : {
-            token : token
-        },
-        where : {
-            email : user.email
-        },
-        select : {
-            token : true
-        }
-    })
+  const verifyOTP = async (userId, otp) => {
+    try {
+      return await validateOTP(userId, otp);
+  
+    } catch (error) {
+      throw new ResponseError(400, error.message);
+    }
+  };
 
-}
+ const requestOTP = async (userId, email) => {
+    // Cek apakah sudah ada OTP yang valid
+    const existingOtp = await prismaClient.oTP.findFirst({
+      where: {
+        userId: userId,
+        expiresAt: {
+          gte: new Date(), // Mengecek jika OTP masih berlaku
+        },
+      },
+    });
+  
+    if (existingOtp) {
+      // Jika OTP masih valid, kirimkan response error
+      throw new ResponseError(400, "OTP is already valid and not expired. Please verify it.");
+    }
+  
+    // Jika OTP tidak ada atau sudah kadaluarsa, buat dan kirimkan OTP baru
+    return await generateAndSendOTP(userId, email);
+    
+  };
+  
+  
 
 const get = async(id) =>{
     id = validate(getUserValidation, id)
@@ -84,6 +129,7 @@ const get = async(id) =>{
             name : true,
             address : true,
             phone_number : true,
+            email_verified : true,
             img_url : true
         }
     })
@@ -150,6 +196,8 @@ export default {
     register,
     login,
     get,
-    update,  // Export the update function
-    remove   // Export the remove function
+    update,  
+    remove,
+    verifyOTP,
+    requestOTP
 };

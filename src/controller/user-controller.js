@@ -1,6 +1,5 @@
 import userService  from "../service/user-service.js"
 
-
 const register = async(req, res, next ) =>{
 
     try{
@@ -11,7 +10,6 @@ const register = async(req, res, next ) =>{
     }catch(e){
         next(e)
     }
-
 }
 
 const login = async(req,res,next)=>{
@@ -61,11 +59,46 @@ const remove = async (req, res, next) => {
         next(e);
     }
 };
+// Verify OTP function
+const verifyOTP = async (req, res, next) => {
+    const otp  = req.body.otp;
+    const userId = req.user.id;
+
+    try {
+        const result = await userService.verifyOTP(userId, otp);
+        res.status(200).json({
+            message: result.message,
+        });
+    } catch (e) {
+        next(e);
+    }
+};
+
+
+// Verify OTP function
+const requestOTP = async (req, res, next) => {
+    const userId = req.user.id;
+    const email = req.user.email;
+  
+    try {
+      // Memanggil fungsi requestOTP dari userService
+      const result = await userService.requestOTP(userId, email);
+      // Mengirimkan response jika berhasil
+      res.status(200).json({
+        message: result.message, // Pesan sukses dari hasil generateOTP
+      });
+    } catch (e) {
+        next(e)
+    }
+  };
+
 
 export default {
     register,
     login,
     get,
-    update, 
-    remove  
+    update,
+    remove,
+    verifyOTP, 
+    requestOTP
 };

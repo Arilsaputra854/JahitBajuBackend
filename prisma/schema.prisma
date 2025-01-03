@@ -23,10 +23,24 @@ model User {
   img_url     String?   @db.VarChar(100)
   phone_number String?  @db.VarChar(20)
   token       String?   @db.VarChar(100)
+  email_verified Boolean? @default(false)
   
   orders      Order[]   @relation("UserOrders") // Relasi One-to-Many ke Order
+  carts       Cart[]   @relation("UserCarts") // Relasi One-to-Many ke Order
+  favorites   Favorite[] @relation("UserFavorites")
 
+  otps        OTP[]     @relation("UserOTP")    
   @@map("users")
+}
+
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [user_id], references: [id], name: "UserFavorites")
+  user_id    String
+  product   Product  @relation(fields: [product_id], references: [id], name: "ProductFavorites")
+  product_id String
+
+  @@map("favorites")
 }
 
 model Product {
@@ -39,41 +53,127 @@ model Product {
   seen        Int      @db.Int @default(0)
   favorite    Int      @db.Int @default(0)
   type        Int      @db.Int
-  images_url  Json     // Store image URLs as a JSON array
-  tags        Json     // Store tags as a JSON array
-  size        Json     // Store size options as a JSON array
+  images_url  Json     @default("[]")// Store image URLs as a JSON array
+  tags        Json     @default("[]")// Store tags as a JSON array
+  size        Json     @default("[]")// Store size options as a JSON array
+  colors      Json?    // Store colors for custom
+  features    Json?    // Store features for custom
 
+  orderItems     OrderItem[] @relation("ProductOrderItem")
+  favorites      Favorite[] @relation("ProductFavorites")
+  
   @@map("products")
 }
 
-model Order {
+
+
+model Cart {
   id          String    @id @default(uuid()) @db.VarChar(100)
   buyerId     String    @db.VarChar(100) // Foreign Key ke User
-  buyer       User      @relation(fields: [buyerId], references: [id], name: "UserOrders")
-  orderDate   DateTime  @db.Timestamp(6)
+  buyer       User      @relation(fields: [buyerId], references: [id], name: "UserCarts")
   totalPrice  Float     @db.Float
-  status      String    @default("pending") @db.VarChar(50) // Status pesanan
-  items       OrderItem[]  // Relasi One-to-Many ke OrderItem
+  items       CartItem[]  // Relasi One-to-Many ke CartItem
+
+  @@map("carts")
+}
+
+
+model CartItem {
+  id                String   @id @default(uuid()) @db.VarChar(100)
+  cartId           String   @db.VarChar(100) // Foreign Key ke Cart
+  productId         String   @db.VarChar(100) // Foreign Key ke Product
+  quantity          Int      @default(1)
+  size              String   @db.VarChar(10)
+  price   Float    @db.Float        // Harga saat pembelian
   
-  createdAt   DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt   DateTime  @updatedAt @db.Timestamp(6)
+  cart             Cart    @relation(fields: [cartId], references: [id])
+
+  @@map("cart_items")
+}
+
+model Shipping{
+  id          String  @id @default(uuid()) @db.VarChar(100)
+  name        String  @db.VarChar(100)
+  img_url     String  @db.VarChar(100)
+  type        String  @db.VarChar(100)
+  price       Float  @db.Float
+
+  orders       Order[] @relation("ShippingOrders")
+
+  @@map("shipping_methods")
+}
+
+
+model Packaging{
+  id          String  @id @default(uuid()) @db.VarChar(100)
+  name        String  @db.VarChar(100)
+  description String  @db.VarChar(100)
+  price       Float  @db.Float
+
+  orders       Order[] @relation("PackagingOrders")
+  @@map("packagings")
+}
+
+
+model Order {
+  id           String      @id @default(cuid()) // Primary Key
+  buyer_id     String
+  shipping_id  String
+  packaging_id String
+  total_price  Float       @db.Float
+  order_created DateTime   @default(now()) // Default to current date-time
+  order_status String
+  last_update  DateTime    @default(now())
+  payment_url  String      @default("")
+  expiry_date  DateTime    @default(now())
+
+  buyer        User        @relation(fields: [buyer_id], references: [id], name: "UserOrders")
+  shipping     Shipping    @relation(fields: [shipping_id], references: [id], name: "ShippingOrders")
+  packaging    Packaging   @relation(fields: [packaging_id], references: [id], name: "PackagingOrders")
+  items        OrderItem[] // Relasi One-to-Many ke OrderItem
 
   @@map("orders")
 }
 
-
 model OrderItem {
-  id                String   @id @default(uuid()) @db.VarChar(100)
-  orderId           String   @db.VarChar(100) // Foreign Key ke Order
-  productId         String   @db.VarChar(100) // Foreign Key ke Product
-  quantity          Int      @default(1)
-  priceAtPurchase   Float    @db.Float        // Harga saat pembelian
-  status            String   @default("pending") @db.VarChar(50) // Status item
+  id          String   @id @default(uuid()) @db.VarChar(100)
+  orderId     String   @db.VarChar(100) // Foreign Key ke Order
+  productId   String   @db.VarChar(100) // Foreign Key ke Product
+  quantity    Int      @default(1)
+  size        String   @db.VarChar(10)
+  price       Float    @db.Float        // Harga saat pembelian
   
-  order             Order    @relation(fields: [orderId], references: [id])
-  
-  createdAt         DateTime @default(now()) @db.Timestamp(6)
-  updatedAt         DateTime @updatedAt @db.Timestamp(6)
+  order       Order    @relation(fields: [orderId], references: [id])
+  product     Product  @relation(fields: [productId], references: [id], name: "ProductOrderItem")
 
   @@map("order_items")
+}
+
+model OTP {
+  id        String   @id @default(uuid()) @db.VarChar(100)
+  userId    String   @db.VarChar(100) // Foreign Key ke User
+  otp       String   @db.Text   // Simpan OTP (6 digit)
+  iv        String   
+  expiresAt DateTime // Waktu kedaluwarsa OTP
+  createdAt DateTime @default(now())  // Waktu pembuatan OTP
+
+  user      User     @relation(fields: [userId], references: [id], name: "UserOTP") // Relasi ke User
+
+  @@map("otp")
+}
+
+model TermCondition {
+  id        String   @id @default(uuid()) @db.VarChar(100)
+  data        String   @db.Text
+
+
+  @@map("term_condition")
+}
+
+
+model  SizeGuide{
+  id        String   @id @default(uuid()) @db.VarChar(100)
+  data        String   @db.Text
+
+  @@map("size_guide")
 }
