@@ -177,3 +177,12 @@ model  SizeGuide{
 
   @@map("size_guide")
 }
+
+model SurveiCustom{
+  id        String   @id @default(uuid()) @db.VarChar(100)
+  question_1        String   @db.Text
+  question_2        String   @db.Text
+  question_3        String   @db.Text
+
+  @@map("survei_custom")
+}

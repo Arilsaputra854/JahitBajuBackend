@@ -12,7 +12,7 @@ const registerProductValidation = Joi.object({
     images_url: Joi.array().items(Joi.string().uri()).required(), // Update for array of URLs
     tags: Joi.array().items(Joi.string().max(50)).required(),
     size: Joi.array().items(Joi.string().valid("XS", "S", "M", "L", "XL", "XXL", "ALL SIZE")).required(),
-    colors: Joi.array().items(Joi.string().max(50)).optional(),
+    colors: Joi.array().optional(),
     features: Joi.array().items(Joi.string().max(50)).optional(),
 });
 

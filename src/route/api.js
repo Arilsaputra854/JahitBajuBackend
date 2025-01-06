@@ -9,6 +9,7 @@ import shippingMethodController from "../controller/shipping-method-controller.j
 import favoriteController from "../controller/favorite-controller.js";
 import termConditionController from "../controller/term-condition-controller.js";
 import sizeGuideController from "../controller/size-guide-controller.js";
+import surveiController from "../controller/survei-controller.js";
 
 const userRouter = express.Router();
 const productRouter = express.Router();
@@ -19,14 +20,10 @@ const packagingRouter = express.Router();
 const favoriteRoute = express.Router();
 const termConditionRoute = express.Router();
 const sizeGuideRoute = express.Router();
+const surveiRouter = express.Router();
 
 // Route for registering a new user
 userRouter.get("/api/users/current", authMiddleware, userController.get);
-
-// Route for verify a new user
-userRouter.post("/api/users/current/verify-email", authMiddleware, userController.verifyOTP);
-// Route for request new otp
-userRouter.post("/api/users/current/request-otp", authMiddleware, userController.requestOTP);
 
 // Route for delete user
 userRouter.delete("/api/users/:id", authMiddleware, userController.remove);
@@ -142,6 +139,11 @@ sizeGuideRoute.post("/api/size-guide/", authMiddleware, sizeGuideController.add)
 // Route for update a size guide
 sizeGuideRoute.patch("/api/size-guide/", authMiddleware, sizeGuideController.update);
 
+
+// Route for add a survei
+sizeGuideRoute.post("/api/survei-custom/", authMiddleware, surveiController.add);
+
+
 export {
     userRouter,
     productRouter,
@@ -151,5 +153,6 @@ export {
     packagingRouter,
     favoriteRoute,
     sizeGuideRoute,
-    termConditionRoute
+    termConditionRoute,
+    surveiRouter
 };
