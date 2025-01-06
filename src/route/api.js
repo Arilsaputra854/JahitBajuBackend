@@ -25,6 +25,11 @@ const surveiRouter = express.Router();
 // Route for registering a new user
 userRouter.get("/api/users/current", authMiddleware, userController.get);
 
+// Route for verify a new user
+userRouter.post("/api/users/current/verify-email",authMiddleware,  userController.verifyOTP);
+// Route for request new otp
+userRouter.post("/api/users/current/request-otp",authMiddleware, userController.requestOTP);
+
 // Route for delete user
 userRouter.delete("/api/users/:id", authMiddleware, userController.remove);
 

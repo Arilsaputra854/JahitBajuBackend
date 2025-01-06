@@ -47,19 +47,29 @@ const transporter = nodemailer.createTransport({
 });
 
 // Kirim OTP ke email pengguna
-const sendOTP = async (email, otp) => {
-  const mailOptions = {
-    from: `"Jahit Baju Official" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: "Your OTP Code",
-    text: `Your OTP code is ${otp}. It will expire in 5 minutes.`,
-  };
+const sendOTP = async (email, otp, type) => {
+  var mailOptions
+  if(type == "EMAIL_VERIFICATION"){
+    mailOptions = {
+      from: `"Jahit Baju Official" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Verify Email OTP Code",
+      text: `Your OTP code is ${otp}. It will expire in 5 minutes.`,
+    };
+  }else if(type == "FORGOT_PASSWORD"){
+    mailOptions = {
+      from: `"Jahit Baju Official" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Reset Password OTP Code",
+      text: `Your OTP code is ${otp}. It will expire in 5 minutes.`,
+    };
+  }
 
   return transporter.sendMail(mailOptions);
 };
 
 // Simpan OTP di database
-const saveOTP = async (userId, otp) => {
+const saveOTP = async (userId, otp, type) => {
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // Masa berlaku 5 menit
 
   // Enkripsi OTP sebelum disimpan
@@ -71,27 +81,14 @@ const saveOTP = async (userId, otp) => {
       userId,
       otp: encryptedOTP,
       iv: iv,
+      type : type,
       expiresAt,
     },
   });
 };
 
 // Fungsi untuk generate dan kirim OTP, serta menghapus OTP yang expired
-export const generateAndSendOTP = async (userId, email) => {
-  // Cek apakah ada OTP yang valid dan belum kadaluarsa
-  const existingOtp = await prismaClient.oTP.findFirst({
-    where: {
-      userId: userId,
-      expiresAt: {
-        gte: new Date(),
-      },
-    },
-  });
-
-  if (existingOtp) {
-    // Jika OTP masih valid, return error
-    throw new ResponseError(400, "OTP is already valid and not expired. Please verify it.");
-  }
+export const generateAndSendOTP = async (userId, email, type) => {
 
   // Jika OTP tidak valid atau sudah expired, buat OTP baru
   const otp = generateOTP();
@@ -106,16 +103,16 @@ export const generateAndSendOTP = async (userId, email) => {
   });
 
   // Simpan OTP baru dan kirim ke email pengguna
-  await saveOTP(userId, otp);
-  await sendOTP(email, otp);
+  await saveOTP(userId, otp, type);
+  await sendOTP(email, otp, type);
 
   return { message: "OTP has been successfully sent to your email." };
 };
 
-export const validateOTP = async (userId, otp) => {
+export const validateOTP = async (userId, otp, type) => {
   try {
     const otpRecord = await prismaClient.oTP.findFirst({
-      where: { userId: userId },
+      where: { userId: userId, type : type },
     });
 
     if (!otpRecord) {
@@ -124,7 +121,7 @@ export const validateOTP = async (userId, otp) => {
 
     // Pastikan bahwa otpRecord.otp dan otpRecord.iv tidak undefined
     if (!otpRecord.otp || !otpRecord.iv) {
-      throw new ResponseError(400, "OTP data is missing or invalid");
+      throw new ResponseError(400, "OTP data is missing or invalid.");
     }
 
     if (new Date() > new Date(otpRecord.expiresAt)) {
@@ -137,16 +134,21 @@ export const validateOTP = async (userId, otp) => {
       throw new ResponseError(400, "Invalid OTP");
     }
 
-    await prismaClient.user.update({
-      where: { id: userId },
-      data: { email_verified: true },
-    });
-
     await prismaClient.oTP.delete({
       where: { id: otpRecord.id },
     });
 
-    return { message: "Email verified successfully" };
+    if(type == "EMAIL_VERIFICATION"){
+      await prismaClient.user.update({
+        where: { id: userId },
+        data: { email_verified: true },
+      });
+
+
+    }else if(type == "FORGOT_PASSWORD"){
+        
+      return { message: "Email verified successfully, you can reset password now." };
+    }
   } catch (error) {
     throw new ResponseError(400, error.message);
   }

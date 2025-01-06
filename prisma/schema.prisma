@@ -154,6 +154,7 @@ model OTP {
   userId    String   @db.VarChar(100) // Foreign Key ke User
   otp       String   @db.Text   // Simpan OTP (6 digit)
   iv        String   
+  type      String   @db.VarChar(30) @default("EMAIL_VERIFICATION")
   expiresAt DateTime // Waktu kedaluwarsa OTP
   createdAt DateTime @default(now())  // Waktu pembuatan OTP
 
