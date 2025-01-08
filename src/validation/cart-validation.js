@@ -20,6 +20,7 @@ const validateCartItem = (data) => {
         quantity: Joi.number().integer().min(1).required(),
         price: Joi.number().positive().required(),
         size: Joi.string().max(10).required(),
+        custom_design : Joi.optional()
     });
     return schema.validate(data);
 };

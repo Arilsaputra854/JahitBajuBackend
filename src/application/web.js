@@ -4,6 +4,9 @@ import { errorMiddleware } from "../middleware/error-middleware.js";
 import { productRouter, userRouter, orderRouter, cartRouter, shippingRouter, packagingRouter, favoriteRoute, termConditionRoute, sizeGuideRoute } from "../route/api.js";
 
 export const web = express();
+web.use(express.json({ limit: '20mb' }));
+web.use(express.urlencoded({ limit: '20mb', extended: true }));
+
 web.use(express.json());
 web.use(userRouter)
 web.use(productRouter)

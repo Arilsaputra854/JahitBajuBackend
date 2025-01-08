@@ -32,14 +32,29 @@ const addToCart = async (buyerId, body) => {
     });
 
     if (cartItem) {
-        // If the product with the same size exists, update the quantity
-        cartItem = await prismaClient.cartItem.update({
-            where: { id: cartItem.id },
-            data: {
-                quantity: cartItem.quantity + body.quantity,
-                price: body.price,
-            },
-        });
+        // If the product with the same size exists and RTW, update the quantity
+        if(!cartItem.custom_design){
+            cartItem = await prismaClient.cartItem.update({
+                where: { id: cartItem.id },
+                data: {
+                    quantity: cartItem.quantity + body.quantity,
+                    price: body.price,
+                },
+            });
+        }else{
+            // If the product with the same size exists and Custom, add it as a new item
+            cartItem = await prismaClient.cartItem.create({
+                data: {
+                    id: uuid(),
+                    cartId: cart.id,
+                    productId: body.productId,
+                    quantity: body.quantity,
+                    price: body.price,
+                    custom_design : body.custom_design,
+                    size: body.size,  // Make sure to store the size as well
+                },
+            });
+        }
     } else {
         // If the product with the size doesn't exist, add it as a new item
         cartItem = await prismaClient.cartItem.create({
@@ -49,6 +64,7 @@ const addToCart = async (buyerId, body) => {
                 productId: body.productId,
                 quantity: body.quantity,
                 price: body.price,
+                custom_design : body.custom_design,
                 size: body.size,  // Make sure to store the size as well
             },
         });
@@ -103,6 +119,7 @@ const updateCart = async (buyerId, body) => {
     if (body.price !== undefined) updateData.price = body.price;
     if (body.quantity !== undefined) updateData.quantity = body.quantity;
     if (body.size !== undefined) updateData.size = body.size;
+    if (body.custom_design !== undefined) updateData.custom_design = body.custom_design;
 
     // Update the cart item
     const updatedCartItem = await prismaClient.cartItem.update({
@@ -114,6 +131,7 @@ const updateCart = async (buyerId, body) => {
             productId: true,
             quantity: true,
             price: true,
+            custom_design : true,            
             size: true,
         },
     });

@@ -4,8 +4,6 @@ import { v4 as uuid } from "uuid";
 
 import axios from "axios"; // Import axios untuk request ke API Xendit
 
-// Tambahkan Secret Key dari Xendit
-//const XENDIT_SECRET_KEY = "xnd_production_hjTMt1AaApzccUgErrh82qeDbhlkXPE3fVF38yKGBXMjx2XiGXROq6YVCYiEYJNw"; // Ganti dengan Secret Key Anda
 const XENDIT_SECRET_KEY =
   "xnd_development_COlOADCc4F1J9dKRYjuD9Ay1I85fpWdCBC0fGJ4BV7ANt1JBwNeIwK8h7S1h"; // Ganti dengan Secret Key Anda
 
@@ -29,7 +27,8 @@ const createOrder = async (body, buyerId,email ) => {
       productId: item.productId,
       quantity: item.quantity,
       size: item.size,
-      price: item.price,
+      price: item.price,      
+      custom_design : item.custom_design,
     }));
   } else if (body.product_id && body.quantity) {
     // Prepare items for "Buy Now"
@@ -37,6 +36,7 @@ const createOrder = async (body, buyerId,email ) => {
       quantity: body.quantity,
       size: body.size, // Optional size
       price: body.price || 0, // Ensure price is 
+      custom_design : body.custom_design,
       product: {
         connect: { id: body.product_id }, // Sambungkan ke produk yang sudah ada
       },  

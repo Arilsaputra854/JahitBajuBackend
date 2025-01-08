@@ -53,11 +53,11 @@ model Product {
   seen        Int      @db.Int @default(0)
   favorite    Int      @db.Int @default(0)
   type        Int      @db.Int
-  images_url  Json     @default("[]")// Store image URLs as a JSON array
-  tags        Json     @default("[]")// Store tags as a JSON array
-  size        Json     @default("[]")// Store size options as a JSON array
-  colors      Json?    // Store colors for custom
-  features    Json?    // Store features for custom
+  images_url  Json     @default("[]")
+  tags        Json     @default("[]")
+  size        Json     @default("[]")
+  colors      Json?    @default("[]")
+  features    Json?    @default("[]")
 
   orderItems     OrderItem[] @relation("ProductOrderItem")
   favorites      Favorite[] @relation("ProductFavorites")
@@ -85,6 +85,7 @@ model CartItem {
   quantity          Int      @default(1)
   size              String   @db.VarChar(10)
   price   Float    @db.Float        // Harga saat pembelian
+  custom_design String? @db.LongText
   
   cart             Cart    @relation(fields: [cartId], references: [id])
 
@@ -141,7 +142,8 @@ model OrderItem {
   productId   String   @db.VarChar(100) // Foreign Key ke Product
   quantity    Int      @default(1)
   size        String   @db.VarChar(10)
-  price       Float    @db.Float        // Harga saat pembelian
+  price       Float    @db.Float        
+  custom_design String? @db.Text
   
   order       Order    @relation(fields: [orderId], references: [id])
   product     Product  @relation(fields: [productId], references: [id], name: "ProductOrderItem")

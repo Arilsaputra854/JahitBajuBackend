@@ -27,13 +27,13 @@ const register = async (request) => {
             tags: true,
             size: true,
             colors : true,
-            features : true,
+            features : true
         }
     });
 };
 
 const get = async (id) => {
-    // Validate the product ID using getProductValidation
+    
     id = validate(getProductValidation, id);
 
     const product = await prismaClient.product.findUnique({
@@ -50,11 +50,11 @@ const get = async (id) => {
             seen: true,
             favorite: true,
             type: true,
-            images_url: true, // Ensure this is fetched as an array
+            images_url: true, 
             tags: true,
             size: true,
             colors : true,
-            features : true,
+            features : true
         }
     });
 
@@ -66,8 +66,8 @@ const get = async (id) => {
 };
 
 const update = async (id, request) => {
-    id = validate(getProductValidation, id); // Validate the product ID
-    const productData = validate(updateProductValidation, request); // Validate update data
+    id = validate(getProductValidation, id);
+    const productData = validate(updateProductValidation, request);
 
     const productExists = await prismaClient.product.findUnique({ where: { id: id } });
     if (!productExists) {
@@ -91,7 +91,7 @@ const update = async (id, request) => {
             tags: true,
             size: true,
             colors : true,
-            features : true,
+            features : true
         }
     });
 };
@@ -127,11 +127,11 @@ const list = async () => {
             tags: true,
             size: true,
             colors: true,
-            features: true,
+            features: true
         }
     });
   
-    console.log(products); // Log the result to see the structure
+    
     return products;
   };
   
@@ -141,6 +141,6 @@ export default {
     get,
     update,
     remove,
-    list // Export the new list function
+    list 
 };
 

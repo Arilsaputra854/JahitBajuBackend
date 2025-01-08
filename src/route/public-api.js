@@ -19,9 +19,9 @@ publicRouter.post("/api/users/login", userController.login)
 
 
 // Route for verify forgot password otp
-publicRouter.post("/api/users/verify-reset-otp",  userController.verifyForgotOTP);
+publicRouter.post("/api/users/verify-reset-otp",  userController.verifyResetOTP);
 // Route for request forgot password otp
-publicRouter.post("/api/users/request-reset-otp", userController.requestForgotOTP);
+publicRouter.post("/api/users/request-reset-otp", userController.requestResetOTP);
 
 // Route for getting all Product
 publicRouter.get("/api/products", productController.list);
