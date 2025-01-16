@@ -7,8 +7,10 @@ import axios from "axios"; // Import axios untuk request ke API Xendit
 const XENDIT_SECRET_KEY =
   "xnd_development_COlOADCc4F1J9dKRYjuD9Ay1I85fpWdCBC0fGJ4BV7ANt1JBwNeIwK8h7S1h"; // Ganti dengan Secret Key Anda
 
-const createOrder = async (body, buyerId,email ) => {
+const createOrder = async (body, buyerId,email, address) => {
   const totalPrice = body.total_price || 0;
+  let rtwPrice = 0;
+  let customPrice = 0;
 
   let orderItems = [];
 
@@ -22,14 +24,28 @@ const createOrder = async (body, buyerId,email ) => {
       throw new ResponseError(400, "Cart is empty. Cannot create order.");
     }
 
+
+
     // Prepare items from cart
-    orderItems = cartItems.map((item) => ({
-      productId: item.productId,
-      quantity: item.quantity,
-      size: item.size,
-      price: item.price,      
-      custom_design : item.custom_design,
-    }));
+    for (const item of cartItems) {
+      const product = await prismaClient.product.findFirst({
+        where: { id: item.productId },
+      });
+    
+      if (product.type === 1) {
+        rtwPrice = product.price * item.quantity;
+      } else {
+        customPrice = product.price * item.quantity;
+      }
+    
+      orderItems.push({
+        productId: item.productId,
+        quantity: item.quantity,
+        size: item.size,
+        price: item.price,
+        custom_design: item.custom_design,
+      });
+    }
   } else if (body.product_id && body.quantity) {
     // Prepare items for "Buy Now"
     orderItems.push({      
@@ -49,28 +65,42 @@ const createOrder = async (body, buyerId,email ) => {
   const order = await prismaClient.order.create({
     data: {
       id: uuid(),
+      buyer_address : address,
       buyer_id: buyerId,
       shipping_id: body.shipping_id,
       packaging_id: body.packaging_id,
+      rtw_price: rtwPrice,
+      packaging_price: body.packaging_price,
+      shipping_price: body.shipping_price,
+      custom_price: customPrice,
+      discount : body.discount,
       total_price: totalPrice,
       order_created: body.order_created || new Date(),
-      order_status: body.order_status || "PENDING",
+      order_status: body.order_status || "WAITING FOR PAYMENT",
       last_update: new Date(),
+      resi : body.resi,
       items: {
         create: orderItems,
       },
     },
     select: {
       id: true,
-      buyer_id: true,
+      buyer_address : true,
+      buyer_id: true,      
       shipping_id: true,
       packaging_id: true,
       total_price: true,
+      rtw_price: true,
+      packaging_price: true,
+      shipping_price: true,
+      custom_price: true,
+      discount : true,
       order_created: true,
       order_status: true,
       last_update: true,
       items: true,
       payment_url: true,
+      resi : true
     },
   });
 
@@ -106,16 +136,22 @@ const createOrder = async (body, buyerId,email ) => {
       },
       select: {
         id: true,
-        buyer_id: true,
+        buyer_address : true,
+        buyer_id: true,      
         shipping_id: true,
         packaging_id: true,
         total_price: true,
+        rtw_price: true,
+        packaging_price: true,
+        shipping_price: true,
+        custom_price: true,
+        discount : true,
         order_created: true,
         order_status: true,
         last_update: true,
         items: true,
         payment_url: true,
-        expiry_date: true, // Ambil expiry_date untuk dikembalikan
+        resi : true
       },
     });
 
@@ -147,15 +183,22 @@ const getOrder = async (buyer_id) => {
     where: { id: buyer_id },
     select: {
       id: true,
-      buyer_id: true,
+      buyer_address : true,
+      buyer_id: true,      
       shipping_id: true,
       packaging_id: true,
       total_price: true,
+      rtw_price: true,
+      packaging_price: true,
+      shipping_price: true,
+      custom_price: true,
+      discount : true,
       order_created: true,
       order_status: true,
       last_update: true,
       items: true,
       payment_url: true,
+      resi : true
     },
   });
 
@@ -182,21 +225,34 @@ const updateOrder = async (id, body) => {
       buyer_id: body.buyer_id || order.buyer_id,
       shipping_id: body.shipping_id || order.shipping_id,
       packaging_id: body.packaging_id || order.packaging_id,
+      rtw_price: body.rtw_price || order.rtw_price,
+      packaging_price: body.packaging_price || order.packaging_price,
+      shipping_price: body.shipping_price || order.shipping_price,
+      custom_price: body.custom_price || order.custom_price,
+      discount : body.discount || order.discount,
       total_price: body.total_price?.toString() || order.total_price,
       order_status: body.order_status || order.order_status,
       last_update: new Date(),
       payment_url: body.payment_url || order.payment_url,
+      resi: body.resi || order.resi,
     },
     select: {
       id: true,
-      buyer_id: true,
+      buyer_id: true,      
       shipping_id: true,
       packaging_id: true,
       total_price: true,
+      rtw_price: true,
+      packaging_price: true,
+      shipping_price: true,
+      custom_price: true,
+      discount : true,
       order_created: true,
       order_status: true,
       last_update: true,
+      items: true,
       payment_url: true,
+      resi : true
     },
   });
 };
@@ -225,14 +281,22 @@ const listOrders = async () => {
   return prismaClient.order.findMany({
     select: {
       id: true,
-      buyer_id: true,
+      buyer_address : true,
+      buyer_id: true,      
       shipping_id: true,
       packaging_id: true,
       total_price: true,
+      rtw_price: true,
+      packaging_price: true,
+      shipping_price: true,
+      custom_price: true,
+      discount : true,
       order_created: true,
       order_status: true,
       last_update: true,
       items: true,
+      payment_url: true,
+      resi : true
     },
   });
 };

@@ -18,6 +18,8 @@ const addToCart = async (buyerId, body) => {
                 id: uuid(),
                 buyerId,
                 totalPrice: 0,
+                custom_price : 0,
+                rtw_price : 0
             },
         });
     }
@@ -78,16 +80,29 @@ const addToCart = async (buyerId, body) => {
 
     // Calculate total price manually
     let totalPrice = 0;
+    let rtwPrice = 0;
+    let customPrice = 0;
     if (updatedCart.items) {
         for (let item of updatedCart.items) {
             totalPrice += item.price * item.quantity;
+
+            const product = await prismaClient.product.findFirst({
+                where : {id : item.productId}
+            })
+
+            // add total price RTW
+            if(product.type == 1){ 
+                rtwPrice =product.price * item.quantity
+            }else{
+                customPrice = product.price * item.quantity
+            }
         }
     }
 
     // Update the cart total price
     await prismaClient.cart.update({
         where: { id: cart.id },
-        data: { totalPrice: totalPrice }, // Update the total price
+        data: { totalPrice: totalPrice ,custom_price : customPrice, rtw_price : rtwPrice}, // Update the total price
     });
 
     return cartItem;
@@ -130,7 +145,7 @@ const updateCart = async (buyerId, body) => {
             cartId: true,
             productId: true,
             quantity: true,
-            price: true,
+            price: true,            
             custom_design : true,            
             size: true,
         },
@@ -153,7 +168,7 @@ const updateCart = async (buyerId, body) => {
 
 const listCarts = async () => {
     return prismaClient.cart.findMany({
-        select: { id: true, buyerId: true, totalPrice: true, items : true },
+        select: { id: true, buyerId: true, totalPrice: true,custom_price: true,rtw_price: true, items : true },
     });
 };
 
@@ -211,7 +226,7 @@ const removeCartItem = async (buyerId, cartItemId) => {
 const getCartByBuyerId = async (buyerId) => {
     let cart = await prismaClient.cart.findFirst({
         where: { buyerId },
-        select: { id: true, buyerId: true, totalPrice: true, items: true },
+        select: { id: true, buyerId: true, totalPrice: true, items: true,totalPrice: true,custom_price: true,rtw_price: true },
     });
 
     if (!cart) {
@@ -220,8 +235,10 @@ const getCartByBuyerId = async (buyerId) => {
                 id: uuid(),
                 buyerId,
                 totalPrice: 0,
+                custom_price : 0,
+                rtw_price : 0
             },
-            select: { id: true, buyerId: true, totalPrice: true, items: true },
+            select: { id: true, buyerId: true, totalPrice: true,custom_price: true,rtw_price: true, items: true },
         });
     }
 
