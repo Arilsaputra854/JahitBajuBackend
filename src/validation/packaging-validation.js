@@ -7,7 +7,7 @@ const validatePostPackaging = Joi.object({
     });
 
 const validateGetPackaging = Joi.object({
-        name: Joi.string().max(100).required()    
+        id: Joi.string().max(100).required()    
     });
 
 

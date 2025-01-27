@@ -8,7 +8,7 @@ const validateShippingMethod = Joi.object({
     });
 
 const validateGetShippingMethod = Joi.object({
-        name: Joi.string().max(100).required()    
+    id: Joi.string().max(100).required()    
     });
 
 

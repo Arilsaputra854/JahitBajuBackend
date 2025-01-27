@@ -87,14 +87,10 @@ const removeShippingMethods = async (body) => {
 };
 
 // Retrieve or create a cart for a buyer
-const getShipingMethod = async (req) => {
-
-
-    var body = validate(validateGetShippingMethod, req);
-
+const getShipingMethod = async (id) => {
 
     let shippingMethod = await prismaClient.shipping.findFirst({
-        where: { name : body.name },
+        where: { id : id },
         select: { id: true, name: true, price:true, img_url : true, type : true},
     });
 

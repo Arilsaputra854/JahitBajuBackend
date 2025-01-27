@@ -66,8 +66,7 @@ const updatePackaging = async (req) => {
 
 
 const listPackagings = async () => {
-    return prismaClient.packaging.findMany({
-        
+    return prismaClient.packaging.findMany({        
         select: { id: true, name: true, price:true, description : true},
     });
 };
@@ -84,14 +83,10 @@ const removePackaging = async (body) => {
 };
 
 // Retrieve specific packaging
-const getPackaging = async (req) => {
-
-
-    var body = validate(validateGetPackaging, req);
-
+const getPackaging = async (id) => {
 
     let packaging = await prismaClient.packaging.findFirst({
-        where: { name : body.name },
+        where: { id : id },
         select: { id: true, name: true, price:true, description : true},
     });
 

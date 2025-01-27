@@ -25,9 +25,11 @@ const register = async (request) => {
             type: true,
             images_url: true,
             tags: true,
+            category: true,
             size: true,
             colors : true,
-            features : true
+            features : true,
+            last_update : true
         }
     });
 };
@@ -52,9 +54,11 @@ const get = async (id) => {
             type: true,
             images_url: true, 
             tags: true,
+            category: true,
             size: true,
             colors : true,
-            features : true
+            features : true,
+            last_update : true
         }
     });
 
@@ -65,9 +69,34 @@ const get = async (id) => {
     return product;
 };
 
+
+const getByLastUpdate = async () => {
+    
+    const product = await prismaClient.product.findMany({
+        select: {
+            id: true,
+            last_update : true
+        },
+        orderBy: {
+            last_update: 'desc',
+        },
+        take: 1, 
+    });
+
+    if (product.length === 0) {
+        throw new ResponseError(404, "Product not found");
+    }
+
+    return product[0].last_update;
+};
+
 const update = async (id, request) => {
     id = validate(getProductValidation, id);
     const productData = validate(updateProductValidation, request);
+    const updatedProductDataWithLastUpdate = {
+        ...productData,
+        last_update: new Date(), 
+    };
 
     const productExists = await prismaClient.product.findUnique({ where: { id: id } });
     if (!productExists) {
@@ -76,7 +105,7 @@ const update = async (id, request) => {
 
     return prismaClient.product.update({
         where: { id: id },
-        data: productData,
+        data: updatedProductDataWithLastUpdate,
         select: {
             id: true,
             name: true,
@@ -89,9 +118,11 @@ const update = async (id, request) => {
             type: true,
             images_url: true,
             tags: true,
+            category: true,
             size: true,
             colors : true,
-            features : true
+            features : true,
+            last_update : true
         }
     });
 };
@@ -124,10 +155,12 @@ const list = async () => {
             favorite: true,
             type: true,
             images_url: true,
+            category: true,
             tags: true,
             size: true,
             colors: true,
-            features: true
+            features: true,
+            last_update : true
         }
     });
   
@@ -141,6 +174,7 @@ export default {
     get,
     update,
     remove,
-    list 
+    list,
+    getByLastUpdate
 };
 

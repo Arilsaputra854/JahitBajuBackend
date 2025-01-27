@@ -31,6 +31,7 @@ const register = async(request)=>{
             address : true,
             phone_number : true,
             email_verified : true,
+            custom_access : true,
             img_url : true
         }
     })
@@ -47,7 +48,8 @@ const login = async (request) => {
         email: true,
         password: true,
         email_verified: true,
-        id: true, // Tambahkan ID untuk mengirim OTP
+        custom_access : true,
+        id: true,
       },
     });
   
@@ -186,6 +188,7 @@ const get = async(id) =>{
             address : true,
             phone_number : true,
             email_verified : true,
+            custom_access : true,
             img_url : true
         }
     })
@@ -222,6 +225,7 @@ const update = async (id, request) => {
             name: true,
             address: true,
             phone_number: true,
+            custom_access : true,
             img_url: true
         }
     });

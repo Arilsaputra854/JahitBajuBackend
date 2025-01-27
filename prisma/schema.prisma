@@ -25,10 +25,12 @@ model User {
   token          String?  @db.VarChar(100)
   refresh_token  String?  @db.VarChar(100)
   email_verified Boolean? @default(false)
+  custom_access  Boolean? @default(false)
 
   orders    Order[]    @relation("UserOrders") // Relasi One-to-Many ke Order
   carts     Cart[]     @relation("UserCarts") // Relasi One-to-Many ke Order
   favorites Favorite[] @relation("UserFavorites")
+  survei_custom    SurveiCustom[] @relation("SurveiCustom")
 
   otps OTP[] @relation("UserOTP")
 
@@ -57,9 +59,11 @@ model Product {
   type        Int    @db.Int
   images_url  Json   @default("[]")
   tags        Json   @default("[]")
+  category    Json   @default("[]")
   size        Json   @default("[]")
   colors      Json?  @default("[]")
   features    Json?  @default("[]")
+  last_update DateTime @default(now())
 
   orderItems OrderItem[] @relation("ProductOrderItem")
   favorites  Favorite[]  @relation("ProductFavorites")
@@ -188,9 +192,20 @@ model SizeGuide {
 
 model SurveiCustom {
   id         String @id @default(uuid()) @db.VarChar(100)
+  user_id    String     @db.VarChar(100) // Foreign Key ke User
+  user       User       @relation(fields: [user_id], references: [id], name: "SurveiCustom")
   question_1 String @db.Text
   question_2 String @db.Text
   question_3 String @db.Text
 
   @@map("survei_custom")
+}
+
+
+model AppBanner {
+  id         String @id @default(uuid()) @db.VarChar(100)
+  image_url  String @db.Text
+  link       String @db.Text
+
+  @@map("app_banner")
 }

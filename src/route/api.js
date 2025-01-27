@@ -10,6 +10,7 @@ import favoriteController from "../controller/favorite-controller.js";
 import termConditionController from "../controller/term-condition-controller.js";
 import sizeGuideController from "../controller/size-guide-controller.js";
 import surveiController from "../controller/survei-controller.js";
+import appBannerController from "../controller/app-banner-controller.js";
 
 const userRouter = express.Router();
 const productRouter = express.Router();
@@ -21,6 +22,7 @@ const favoriteRoute = express.Router();
 const termConditionRoute = express.Router();
 const sizeGuideRoute = express.Router();
 const surveiRouter = express.Router();
+const appBannerRouter = express.Router();
 
 // Route for registering a new user
 userRouter.get("/api/users/current", authMiddleware, userController.get);
@@ -38,9 +40,6 @@ userRouter.patch("/api/users/:id", authMiddleware, userController.update);
 
 // Route for registering a new product
 productRouter.post("/api/products", authMiddleware, productController.register);
-
-// Route for getting details of a specific product by ID
-productRouter.get("/api/products/:id", authMiddleware, productController.get);
 
 // Route for update details of a specific product by ID
 productRouter.patch("/api/products/:id", authMiddleware, productController.update);
@@ -97,9 +96,6 @@ shippingRouter.patch("/api/shipping/", authMiddleware, shippingMethodController.
 // Route for deleting a shipping
 shippingRouter.delete("/api/shipping/", authMiddleware, shippingMethodController.remove);
 
-// Route for deleting a shipping
-shippingRouter.get("/api/shipping/", authMiddleware, shippingMethodController.get);
-
 
 // Route for post a packaging
 packagingRouter.post("/api/packaging/", authMiddleware, packagingController.add);
@@ -145,8 +141,19 @@ sizeGuideRoute.post("/api/size-guide/", authMiddleware, sizeGuideController.add)
 sizeGuideRoute.patch("/api/size-guide/", authMiddleware, sizeGuideController.update);
 
 
+// Route for add a app banner
+appBannerRouter.post("/api/app-banner/", authMiddleware, appBannerController.add);
+// Route for update a app banner
+appBannerRouter.patch("/api/app-banner/", authMiddleware, appBannerController.update);
+// Route for delete a app banner
+appBannerRouter.delete("/api/app-banner/", authMiddleware, appBannerController.remove);
+
+
 // Route for add a survei
-sizeGuideRoute.post("/api/survei-custom/", authMiddleware, surveiController.add);
+surveiRouter.post("/api/survei-custom/", authMiddleware, surveiController.add);
+
+// Route for get a specific survei
+surveiRouter.get("/api/survei-custom/", authMiddleware, surveiController.get);
 
 
 export {
@@ -159,5 +166,6 @@ export {
     favoriteRoute,
     sizeGuideRoute,
     termConditionRoute,
+    appBannerRouter,
     surveiRouter
 };

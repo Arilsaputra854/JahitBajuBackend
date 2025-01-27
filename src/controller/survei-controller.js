@@ -6,7 +6,8 @@ import { validate } from "../validation/validation.js";
 const add = async (req, res, next) => {
     try {        
         const body = validate(validateSurvei, req.body)
-        const result = await surveiService.addSurveiData(body);
+        const userId = req.user.id;
+        const result = await surveiService.addSurveiData(body, userId);
         res.status(200).json({
             error : false,
             data: result
@@ -17,9 +18,9 @@ const add = async (req, res, next) => {
 };
 
 const get = async (req, res, next) => {
-    try {
-        
-        const result = await surveiService.getSurveiData();
+    try {        
+        const userId = req.user.id;
+        const result = await surveiService.getSurveiData(userId);
         res.status(200).json({
             error : false,
             data: result
@@ -30,7 +31,21 @@ const get = async (req, res, next) => {
 };
 
 
+const getAll = async (req, res, next) => {
+    try {
+        
+        const result = await surveiService.getAllSurveiData();
+        res.status(200).json({
+            error : false,
+            data: result
+        });
+    } catch (e) {
+        next(e); 
+    }
+};
+
 export default {
     add,
-    get
+    get,
+    getAll
 };
