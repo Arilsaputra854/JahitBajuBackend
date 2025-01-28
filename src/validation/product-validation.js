@@ -30,9 +30,9 @@ const updateProductValidation = Joi.object({
     type: Joi.number().integer().min(0).optional(),
     images_url: Joi.array().items(Joi.string().uri()).optional(),
     tags: Joi.array().items(Joi.string().max(50)).optional(),
-    category: Joi.array().items(Joi.string().max(50)).required(),
+    category: Joi.array().items(Joi.string().max(50)).optional(),
     size: Joi.array().items(Joi.string().valid("XS", "S", "M", "L", "XL", "XXL", "ALL SIZE")).optional(),
-    colors: Joi.array().items(Joi.string().max(50)).optional(),
+    colors: Joi.array().items(Joi.string()).optional(),
     features: Joi.array().items(Joi.string().max(50)).optional(),
 });
 

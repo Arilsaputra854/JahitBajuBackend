@@ -100,7 +100,11 @@ const createOrder = async (body, buyerId,email, address) => {
       last_update: true,
       items: true,
       payment_url: true,
-      resi : true
+      resi : true,
+
+      payment_date : true,
+      xendit_status : true,
+      payment_method : true,
     },
   });
 
@@ -151,7 +155,11 @@ const createOrder = async (body, buyerId,email, address) => {
         last_update: true,
         items: true,
         payment_url: true,
-        resi : true
+        resi : true,
+
+      payment_date : true,
+      xendit_status : true,
+      payment_method : true,
       },
     });
 
@@ -198,7 +206,11 @@ const getOrder = async (buyer_id) => {
       last_update: true,
       items: true,
       payment_url: true,
-      resi : true
+      resi : true,
+
+      payment_date : true,
+      xendit_status : true,
+      payment_method : true,
     },
   });
 
@@ -252,7 +264,10 @@ const updateOrder = async (id, body) => {
       last_update: true,
       items: true,
       payment_url: true,
-      resi : true
+      resi : true,
+      payment_date : true,
+      xendit_status : true,
+      payment_method : true,
     },
   });
 };
@@ -296,7 +311,10 @@ const listOrders = async () => {
       last_update: true,
       items: true,
       payment_url: true,
-      resi : true
+      resi : true,
+      payment_date : true,
+      xendit_status : true,
+      payment_method : true,
     },
   });
 };

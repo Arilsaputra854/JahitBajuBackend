@@ -26,6 +26,7 @@ model User {
   refresh_token  String?  @db.VarChar(100)
   email_verified Boolean? @default(false)
   custom_access  Boolean? @default(false)
+  role  String? @default("User")
 
   orders    Order[]    @relation("UserOrders") // Relasi One-to-Many ke Order
   carts     Cart[]     @relation("UserCarts") // Relasi One-to-Many ke Order
@@ -138,6 +139,10 @@ model Order {
   payment_url     String   @default("")
   expiry_date     DateTime @default(now())
   resi            String   @default("-")
+  xendit_status   String?   
+  payment_date   String?    
+  payment_method  String?   
+
 
   buyer     User        @relation(fields: [buyer_id], references: [id], name: "UserOrders")
   shipping  Shipping    @relation(fields: [shipping_id], references: [id], name: "ShippingOrders")
