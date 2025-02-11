@@ -16,6 +16,7 @@ const validateOrder = Joi.object({
     order_status: Joi.string().max(100).required(),
     resi: Joi.string().max(100).optional(),
     description: Joi.string().optional(),
+    custom_design : Joi.string().optional()
 });
 
 

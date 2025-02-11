@@ -48,7 +48,7 @@ const addToCart = async (buyerId, body) => {
             cartItem = await prismaClient.cartItem.create({
                 data: {
                     id: uuid(),
-                    cartId: cart.id,
+                    cart_id: cart.id,
                     product_id: body.product_id,
                     quantity: body.quantity,
                     price: body.price,
@@ -122,7 +122,7 @@ const updateCart = async (buyerId, body) => {
     // Find the specific cart item within the buyer's cart
     const cartItem = await prismaClient.cartItem.findFirst({
         where: {
-            cartId: cart.id,
+            cart_id: cart.id,
             product_id: body.product_id,
         },
     });
@@ -203,22 +203,22 @@ const removeCartItem = async (buyerId, cartItemId) => {
     // 3. Hapus cartItem berdasarkan id yang benar
     await prismaClient.cartItem.delete({ where: { id: cartItem.id } });
 
-    const cartId = cart.id;
+    const cart_id = cart.id;
 
     // 4. Hitung total harga setelah penghapusan
     const newTotalPrice = await prismaClient.cartItem.aggregate({
-        where: { cart_id : cartId },
+        where: { cart_id : cart_id },
         _sum: { price: true },
     });
 
     // 5. Perbarui total price di cart
     await prismaClient.cart.update({
-        where: { id: cartId },
+        where: { id: cart_id },
         data: { total_price: newTotalPrice._sum.price || 0 },
     });
 
     // 6. Kembalikan response dengan total harga terbaru
-    return { cartId, total_price: newTotalPrice._sum.price || 0 };
+    return { cart_id, total_price: newTotalPrice._sum.price || 0 };
 };
 
 

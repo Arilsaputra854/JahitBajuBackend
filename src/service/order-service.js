@@ -1,11 +1,14 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 import { v4 as uuid } from "uuid";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 
 import axios from "axios"; // Import axios untuk request ke API Xendit
 
-const XENDIT_SECRET_KEY =
-  env("XENDIT-API"); // Ganti dengan Secret Key Anda
+const XENDIT_SECRET_KEY = process.env.XENDIT_API // Ganti dengan Secret Key Anda
 
 const createOrder = async (body, buyerId,email, address) => {
   const totalPrice = body.total_price || 0;
@@ -65,7 +68,7 @@ const createOrder = async (body, buyerId,email, address) => {
     if (product.type === 1) {
       rtwPrice = product.price * body.quantity;
     } else {
-      customPrice = product.price * item.quantity;
+      customPrice = product.price * body.quantity;
     }
     // Prepare items for "Buy Now"
     orderItems.push({      
