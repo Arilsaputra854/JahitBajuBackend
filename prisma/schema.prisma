@@ -13,16 +13,215 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// User model (existing)
+model User {
+  id             String   @id @default(uuid())
+  email          String   @unique
+  password       String   @db.VarChar(100)
+  name           String   @db.VarChar(100)
+  address        String?  @db.Text
+  img_url        String?  @db.VarChar(100)
+  phone_number   String?  @db.VarChar(20)
+  token          String?  @db.VarChar(100)
+  refresh_token  String?  @db.VarChar(100)
+  email_verified Boolean? @default(false)
+  custom_access  Boolean? @default(false)
+  role           String?  @default("User")
 
-model User{
-  id String @id @db.VarChar(100)
-  password String @db.VarChar(100)
-  name String @db.VarChar(100)
-  address String? @db.Text
-  img_url String? @db.VarChar(100)
-  phone_number String? @db.VarChar(20)
-  token String? @db.VarChar(100)
+  orders        Order[]        @relation("UserOrders") // Relasi One-to-Many ke Order
+  carts         Cart[]         @relation("UserCarts") // Relasi One-to-Many ke Order
+  favorites     Favorite[]     @relation("UserFavorites")
+  survei_custom SurveiCustom[] @relation("SurveiCustom")
 
+  otps OTP[] @relation("UserOTP")
 
   @@map("users")
+}
+
+model Favorite {
+  id         Int     @id @default(autoincrement())
+  user       User    @relation(fields: [user_id], references: [id], name: "UserFavorites")
+  user_id    String
+  product    Product @relation(fields: [product_id], references: [id], name: "ProductFavorites")
+  product_id String
+
+  @@map("favorites")
+}
+
+model Product {
+  id          String   @id @default(uuid()) @db.VarChar(100)
+  name        String   @db.VarChar(100)
+  description String   @db.Text
+  price       Float    @db.Float
+  stock       Int      @db.Int
+  sold        Int      @default(0) @db.Int
+  seen        Int      @default(0) @db.Int
+  favorite    Int      @default(0) @db.Int
+  type        Int      @db.Int
+  designer_category String @default("Basic")
+  images_url  Json     @default("[]")
+  tags        Json     @default("[]")
+  category    Json     @default("[]")
+  size        Json     @default("[]")
+  colors      Json?    @default("[]")
+  features    Json?    @default("[]")
+  last_update DateTime @default(now())
+
+  orderItems OrderItem[] @relation("ProductOrderItem")
+  favorites  Favorite[]  @relation("ProductFavorites")
+
+  @@map("products")
+}
+
+model Cart {
+  id           String     @id @default(uuid()) @db.VarChar(100)
+  buyer_id      String     @db.VarChar(100) // Foreign Key ke User
+  buyer        User       @relation(fields: [buyer_id], references: [id], name: "UserCarts")
+  total_price   Float      @db.Float
+  rtw_price    Float      @default(0) @db.Float
+  custom_price Float      @default(0) @db.Float
+  items        CartItem[] // Relasi One-to-Many ke CartItem
+
+  @@map("carts")
+}
+
+model CartItem {
+  id            String  @id @default(uuid()) @db.VarChar(100)
+  cart_id        String  @db.VarChar(100) // Foreign Key ke Cart
+  product_id     String  @db.VarChar(100) // Foreign Key ke Product
+  quantity      Int     @default(1)
+  size          String  @db.VarChar(10)
+  price         Float   @db.Float // Harga saat pembelian
+  custom_design String? 
+
+  cart Cart @relation(fields: [cart_id], references: [id])
+
+  @@map("cart_items")
+}
+
+model Shipping {
+  id      String @id @default(uuid()) @db.VarChar(100)
+  name    String @db.VarChar(100)
+  img_url String @db.VarChar(100)
+  type    String @db.VarChar(100)
+  price   Float  @db.Float
+
+  orders Order[] @relation("ShippingOrders")
+
+  @@map("shipping_methods")
+}
+
+model Packaging {
+  id          String @id @default(uuid()) @db.VarChar(100)
+  name        String @db.VarChar(100)
+  description String @db.VarChar(100)
+  price       Float  @db.Float
+
+  orders Order[] @relation("PackagingOrders")
+
+  @@map("packagings")
+}
+
+model Order {
+  id              String   @id @default(cuid()) // Primary Key
+  buyer_id        String
+  buyer_address   String   @default("")
+  shipping_id     String
+  packaging_id    String
+  rtw_price       Float    @default(0) @db.Float
+  custom_price    Float    @default(0) @db.Float
+  shipping_price  Float    @default(0) @db.Float
+  packaging_price Float    @default(0) @db.Float
+  total_price     Float    @db.Float
+  discount        Float    @default(0) @db.Float
+  order_created   DateTime @default(now()) // Default to current date-time
+  order_status    String
+  last_update     DateTime @default(now())
+  payment_url     String   @default("")
+  expiry_date     DateTime @default(now())
+  resi            String   @default("-")
+  description     String?
+  xendit_status   String?
+  payment_date    String?
+  payment_method  String?
+
+  buyer     User        @relation(fields: [buyer_id], references: [id], name: "UserOrders")
+  shipping  Shipping    @relation(fields: [shipping_id], references: [id], name: "ShippingOrders")
+  packaging Packaging   @relation(fields: [packaging_id], references: [id], name: "PackagingOrders")
+  items     OrderItem[] // Relasi One-to-Many ke OrderItem
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id               String  @id @default(uuid()) @db.VarChar(100)
+  order_id         String  @db.VarChar(100)
+  product_id       String  @db.VarChar(100)
+  quantity         Int     @default(1)
+  size             String  @db.VarChar(10)
+  price            Float   @db.Float
+  custom_design String? @unique @db.VarChar(100)
+
+  order        Order         @relation(fields: [order_id], references: [id])
+  product      Product       @relation(fields: [product_id], references: [id], name: "ProductOrderItem")
+  
+
+  @@map("order_items")
+}
+
+model OTP {
+  id        String   @id @default(uuid()) @db.VarChar(100)
+  userId    String   @db.VarChar(100) // Foreign Key ke User
+  otp       String   @db.Text // Simpan OTP (6 digit)
+  iv        String
+  type      String   @default("EMAIL_VERIFICATION") @db.VarChar(30)
+  expiresAt DateTime // Waktu kedaluwarsa OTP
+  createdAt DateTime @default(now()) // Waktu pembuatan OTP
+
+  user User @relation(fields: [userId], references: [id], name: "UserOTP") // Relasi ke User
+
+  @@map("otp")
+}
+
+model TermCondition {
+  id   String @id @default(uuid()) @db.VarChar(100)
+  data String @db.Text
+
+  @@map("term_condition")
+}
+
+
+model ProductTerms {
+  id   String @id @default(uuid()) @db.VarChar(100)
+  color String @db.Text
+  texture String @db.Text
+  size String @db.Text
+
+  @@map("product_terms")
+}
+
+model SizeGuide {
+  id   String @id @default(uuid()) @db.VarChar(100)
+  data String @db.Text
+
+  @@map("size_guide")
+}
+
+model SurveiCustom {
+  id         String @id @default(uuid()) @db.VarChar(100)
+  user_id    String @db.VarChar(100) // Foreign Key ke User
+  user       User   @relation(fields: [user_id], references: [id], name: "SurveiCustom")
+  question_1 String @db.Text
+  question_2 String @db.Text
+  question_3 String @db.Text
+
+  @@map("survei_custom")
+}
+
+model AppBanner {
+  id        String @id @default(uuid()) @db.VarChar(100)
+  image_url String @db.Text
+  link      String @db.Text
+
+  @@map("app_banner")
 }

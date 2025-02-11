@@ -1,0 +1,11 @@
+-- AlterTable
+ALTER TABLE `orders` ADD COLUMN `buyer_address` VARCHAR(191) NOT NULL DEFAULT '',
+    ADD COLUMN `custom_price` FLOAT NOT NULL DEFAULT 0,
+    ADD COLUMN `discount` FLOAT NOT NULL DEFAULT 0,
+    ADD COLUMN `packaging_price` FLOAT NOT NULL DEFAULT 0,
+    ADD COLUMN `resi` VARCHAR(191) NOT NULL DEFAULT '-',
+    ADD COLUMN `rtw_price` FLOAT NOT NULL DEFAULT 0,
+    ADD COLUMN `shipping_price` FLOAT NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE `users` ADD COLUMN `refresh_token` VARCHAR(100) NULL;
