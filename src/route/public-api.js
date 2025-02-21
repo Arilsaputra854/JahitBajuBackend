@@ -11,6 +11,7 @@ import surveiController from "../controller/survei-controller.js";
 import appBannerController from "../controller/app-banner-controller.js";
 import customDesignController from "../controller/custom-design-controller.js";
 import productTermsController from "../controller/product-terms-controller.js";
+import careGuideController from "../controller/care-guide-controller.js";
 
 
 const publicRouter = express.Router()
@@ -54,6 +55,10 @@ publicRouter.get("/api/product-terms", productTermsController.get);
 
 // Route for getting Panduan ukur baju
 publicRouter.get("/api/size-guide", sizeGuideController.get);
+
+
+// Route for getting Panduan Perawatan
+publicRouter.get("/api/care-guide", careGuideController.get);
 
 // Route for getting survei custom data
 publicRouter.get("/api/survei-custom/all", surveiController.getAll);

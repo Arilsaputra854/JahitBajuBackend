@@ -13,6 +13,7 @@ import surveiController from "../controller/survei-controller.js";
 import appBannerController from "../controller/app-banner-controller.js";
 import customDesignController from "../controller/custom-design-controller.js";
 import productTermsController from "../controller/product-terms-controller.js";
+import careGuideController from "../controller/care-guide-controller.js";
 
 const userRouter = express.Router();
 const productRouter = express.Router();
@@ -23,6 +24,7 @@ const packagingRouter = express.Router();
 const favoriteRoute = express.Router();
 const termConditionRoute = express.Router();
 const sizeGuideRoute = express.Router();
+const careGuideRoute = express.Router();
 const surveiRouter = express.Router();
 const appBannerRouter = express.Router();
 const customDesignRouter = express.Router();
@@ -152,6 +154,13 @@ sizeGuideRoute.post("/api/size-guide/", authMiddleware, sizeGuideController.add)
 sizeGuideRoute.patch("/api/size-guide/", authMiddleware, sizeGuideController.update);
 
 
+
+// Route for add a care guide
+sizeGuideRoute.post("/api/care-guide", authMiddleware, careGuideController.add);
+// Route for update a care guide
+sizeGuideRoute.patch("/api/care-guide/:id", authMiddleware, careGuideController.update);
+
+
 // Route for add a app banner
 appBannerRouter.post("/api/app-banner/", authMiddleware, appBannerController.add);
 // Route for update a app banner
@@ -180,6 +189,7 @@ export {
     packagingRouter,
     favoriteRoute,
     sizeGuideRoute,
+    careGuideRoute,
     termConditionRoute,
     appBannerRouter,
     surveiRouter,
