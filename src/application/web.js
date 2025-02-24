@@ -1,7 +1,7 @@
 import express from "express"
 import { publicRouter } from "../route/public-api.js";
 import { errorMiddleware } from "../middleware/error-middleware.js";
-import { productRouter, userRouter, orderRouter, cartRouter, shippingRouter, packagingRouter, favoriteRoute, termConditionRoute, sizeGuideRoute, appBannerRouter, surveiRouter, customDesignRouter, productTermsRouter, careGuideRoute } from "../route/api.js";
+import { productRouter, userRouter, orderRouter, cartRouter, shippingRouter, packagingRouter, favoriteRoute, termConditionRoute, sizeGuideRoute, appBannerRouter, surveiRouter, customDesignRouter, productTermsRouter, careGuideRoute, productTextureRouter } from "../route/api.js";
 
 export const web = express();
 web.use(express.json({ limit: '20mb' }));
@@ -23,6 +23,7 @@ web.use(appBannerRouter)
 web.use(surveiRouter)
 web.use(customDesignRouter)
 web.use(productTermsRouter)
+web.use(productTextureRouter)
 web.use(errorMiddleware)
 
 

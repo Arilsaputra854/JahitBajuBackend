@@ -12,6 +12,7 @@ import appBannerController from "../controller/app-banner-controller.js";
 import customDesignController from "../controller/custom-design-controller.js";
 import productTermsController from "../controller/product-terms-controller.js";
 import careGuideController from "../controller/care-guide-controller.js";
+import productTextureController from "../controller/product-texture-controller.js";
 
 
 const publicRouter = express.Router()
@@ -30,6 +31,10 @@ publicRouter.post("/api/users/request-reset-otp", userController.requestResetOTP
 
 // Route for getting all Product
 publicRouter.get("/api/products", productController.get);
+
+
+// Route for getting all Product
+publicRouter.get("/api/product-texture", productTextureController.get);
 
 
 // Route for getting latest datetime

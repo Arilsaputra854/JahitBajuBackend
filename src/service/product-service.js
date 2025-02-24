@@ -13,24 +13,8 @@ const register = async (request) => {
             ...productData,
             id: uuid(), 
         },
-        select: {
-            id: true,
-            name: true,
-            description: true,
-            price: true,
-            stock: true,
-            sold: true,
-            seen: true,
-            favorite: true,
-            type: true,
-            images_url: true,
-            tags: true,
-            category: true,
-            size: true,
-            colors : true,
-            features : true,
-            designer_category : true,
-            last_update : true
+        include : {
+            textures : true
         }
     });
 };
@@ -43,24 +27,8 @@ const get = async (id) => {
         where: {
             id: id
         },
-        select: {
-            id: true,
-            name: true,
-            description: true,
-            price: true,
-            stock: true,
-            sold: true,
-            seen: true,
-            favorite: true,
-            type: true,
-            images_url: true, 
-            tags: true,
-            category: true,
-            size: true,
-            colors : true,
-            features : true,
-            designer_category : true,
-            last_update : true
+        include : {
+            textures : true
         }
     });
 
@@ -108,24 +76,8 @@ const update = async (id, request) => {
     return prismaClient.product.update({
         where: { id: id },
         data: updatedProductDataWithLastUpdate,
-        select: {
-            id: true,
-            name: true,
-            description: true,
-            price: true,
-            stock: true,
-            sold: true,
-            seen: true,
-            favorite: true,
-            type: true,
-            images_url: true,
-            tags: true,
-            category: true,
-            size: true,
-            colors : true,
-            features : true,
-            designer_category : true,
-            last_update : true
+        include : {
+            textures : true
         }
     });
 };
@@ -147,24 +99,8 @@ const remove = async (id) => {
 
 const list = async () => {
     const products = await prismaClient.product.findMany({
-        select: {
-            id: true,
-            name: true,
-            description: true,
-            price: true,
-            stock: true,
-            sold: true,
-            seen: true,
-            favorite: true,
-            type: true,
-            images_url: true,
-            category: true,
-            tags: true,
-            size: true,
-            colors: true,
-            features: true,
-            designer_category : true,
-            last_update : true
+        include : {
+            textures : true
         }
     });
   

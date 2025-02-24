@@ -14,6 +14,7 @@ import appBannerController from "../controller/app-banner-controller.js";
 import customDesignController from "../controller/custom-design-controller.js";
 import productTermsController from "../controller/product-terms-controller.js";
 import careGuideController from "../controller/care-guide-controller.js";
+import productTextureController from "../controller/product-texture-controller.js";
 
 const userRouter = express.Router();
 const productRouter = express.Router();
@@ -29,6 +30,7 @@ const surveiRouter = express.Router();
 const appBannerRouter = express.Router();
 const customDesignRouter = express.Router();
 const productTermsRouter = express.Router();
+const productTextureRouter = express.Router();
 
 // Route for registering a new user
 userRouter.get("/api/users/current", authMiddleware, userController.get);
@@ -52,6 +54,16 @@ productRouter.patch("/api/products/:id", authMiddleware, productController.updat
 
 // Route for delete a specific product by ID
 productRouter.delete("/api/products/:id", authMiddleware, productController.remove);
+
+
+// Route for registering a new product texture
+productTextureRouter.post("/api/product-texture", authMiddleware, productTextureController.register);
+
+// Route for update details of a specific product texture by ID
+productTextureRouter.patch("/api/product-texture", authMiddleware, productTextureController.update);
+
+// Route for delete a specific product texture by ID
+productTextureRouter.delete("/api/product-texture", authMiddleware, productTextureController.remove);
 
 
 // Route for create a new order
@@ -194,5 +206,6 @@ export {
     appBannerRouter,
     surveiRouter,
     customDesignRouter,
-    productTermsRouter
+    productTermsRouter,
+    productTextureRouter
 };
