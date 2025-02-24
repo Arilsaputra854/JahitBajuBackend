@@ -251,3 +251,13 @@ model AppBanner {
 
   @@map("app_banner")
 }
+
+
+
+model ProductNote {
+  id   String @id @default(uuid()) @db.VarChar(100)
+  data String @db.Text
+  type Int 
+
+  @@map("product_note")
+}

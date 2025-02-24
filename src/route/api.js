@@ -15,6 +15,7 @@ import customDesignController from "../controller/custom-design-controller.js";
 import productTermsController from "../controller/product-terms-controller.js";
 import careGuideController from "../controller/care-guide-controller.js";
 import productTextureController from "../controller/product-texture-controller.js";
+import productNoteController from "../controller/product-note-controller.js";
 
 const userRouter = express.Router();
 const productRouter = express.Router();
@@ -31,6 +32,7 @@ const appBannerRouter = express.Router();
 const customDesignRouter = express.Router();
 const productTermsRouter = express.Router();
 const productTextureRouter = express.Router();
+const productNoteRouter = express.Router();
 
 // Route for registering a new user
 userRouter.get("/api/users/current", authMiddleware, userController.get);
@@ -64,6 +66,17 @@ productTextureRouter.patch("/api/product-texture", authMiddleware, productTextur
 
 // Route for delete a specific product texture by ID
 productTextureRouter.delete("/api/product-texture", authMiddleware, productTextureController.remove);
+
+
+// Route for getting a product note
+productTextureRouter.get("/api/product-note", authMiddleware, productNoteController.get);
+
+// Route for registering a new product note
+productTextureRouter.post("/api/product-note", authMiddleware, productNoteController.add);
+
+// Route for update product note
+productTextureRouter.patch("/api/product-notes", authMiddleware, productNoteController.update);
+
 
 
 // Route for create a new order

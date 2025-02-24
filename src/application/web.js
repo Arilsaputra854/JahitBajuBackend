@@ -24,6 +24,12 @@ web.use(surveiRouter)
 web.use(customDesignRouter)
 web.use(productTermsRouter)
 web.use(productTextureRouter)
+web.use(productTextureRouter)
 web.use(errorMiddleware)
 
-
+web.get('/', (req, res) => {
+    res.json({
+      message: "Selamat datang di API Jahit Baju Apps v1!",
+      success: true,
+    });
+  });
