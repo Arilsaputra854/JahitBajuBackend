@@ -69,26 +69,11 @@ model Product {
   colors      Json?    @default("[]")
   features    Json?    @default("[]")
   last_update DateTime @default(now())
-
-  textures    Texture[]
-
+  
   orderItems OrderItem[] @relation("ProductOrderItem")
   favorites  Favorite[]  @relation("ProductFavorites")
 
   @@map("products")
-}
-
-model Texture {
-  id           String  @id @default(uuid()) @db.VarChar(100)
-  product_id   String  @db.VarChar(100)
-  title        String  @db.VarChar(100)
-  url_texture  String?  @db.Text
-  hex          String? @db.VarChar(7)
-  description    String? @db.Text
-
-  product      Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
-
-  @@map("textures")
 }
 
 model Cart {
@@ -260,4 +245,58 @@ model ProductNote {
   type Int 
 
   @@map("product_note")
+}
+
+
+
+
+
+model Designer {
+  id    String @id @default(uuid()) @db.VarChar(100)
+  name  String
+  looks Look[]
+
+
+  @@map("designers")
+}
+
+
+model Look {
+  id          String @id @default(uuid()) @db.VarChar(100)
+  designer_id  String
+  designer    Designer     @relation(fields: [designer_id], references: [id], onDelete: Cascade)
+  name        String
+  features    Json?
+  description String?
+  size        Json?
+  lastUpdate  DateTime     @updatedAt
+  sold        Int          @default(0)
+  seen        Int          @default(0)
+  textures    LookTexture[]
+
+  @@map("look")
+}
+
+model LookTexture {
+  id        String @id @default(uuid()) @db.VarChar(100)
+  look_id    String
+  texture_id String   @db.VarChar(100)
+
+  look      Look     @relation(fields: [look_id], references: [id], onDelete: Cascade)
+  texture   Texture  @relation(fields: [texture_id], references: [id], onDelete: Cascade)
+
+  @@map("look_textures")
+}
+
+
+model Texture {
+  id           String  @id @default(uuid()) @db.VarChar(100)
+  title        String  @db.VarChar(100)
+  url_texture  String?  @db.Text
+  hex          String? @db.VarChar(7)
+  description    String? @db.Text
+
+  looks       LookTexture[]  
+
+  @@map("textures")
 }

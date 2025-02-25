@@ -12,7 +12,9 @@ import appBannerController from "../controller/app-banner-controller.js";
 import customDesignController from "../controller/custom-design-controller.js";
 import productTermsController from "../controller/product-terms-controller.js";
 import careGuideController from "../controller/care-guide-controller.js";
-import productTextureController from "../controller/product-texture-controller.js";
+import designerController from "../controller/designer-controller.js";
+import lookController from "../controller/look-controller.js";
+import textureController from "../controller/texture-controller.js";
 
 
 const publicRouter = express.Router()
@@ -31,11 +33,6 @@ publicRouter.post("/api/users/request-reset-otp", userController.requestResetOTP
 
 // Route for getting all Product
 publicRouter.get("/api/products", productController.get);
-
-
-// Route for getting all Product
-publicRouter.get("/api/product-texture", productTextureController.get);
-
 
 // Route for getting latest datetime
 publicRouter.get("/api/products/latest", productController.getLatest);
@@ -74,6 +71,19 @@ publicRouter.get("/api/app-banner/", appBannerController.get);
 
 // Route for get custom design
 publicRouter.get("/api/order/custom-design/:filename", customDesignController.get);
+
+
+// Route for get a designer
+publicRouter.get("/api/designer/", designerController.get);
+
+
+// Route for get a looks
+publicRouter.get("/api/designer/look/", lookController.get);
+
+
+// Route for get a looks
+publicRouter.get("/api/designer/look/texture", textureController.get);
+
 
 export {
     publicRouter

@@ -14,8 +14,10 @@ import appBannerController from "../controller/app-banner-controller.js";
 import customDesignController from "../controller/custom-design-controller.js";
 import productTermsController from "../controller/product-terms-controller.js";
 import careGuideController from "../controller/care-guide-controller.js";
-import productTextureController from "../controller/product-texture-controller.js";
 import productNoteController from "../controller/product-note-controller.js";
+import designerController from "../controller/designer-controller.js";
+import lookController from "../controller/look-controller.js";
+import textureController from "../controller/texture-controller.js";
 
 const userRouter = express.Router();
 const productRouter = express.Router();
@@ -31,8 +33,10 @@ const surveiRouter = express.Router();
 const appBannerRouter = express.Router();
 const customDesignRouter = express.Router();
 const productTermsRouter = express.Router();
-const productTextureRouter = express.Router();
+const lookTextureRouter = express.Router();
 const productNoteRouter = express.Router();
+const designerRouter = express.Router();
+const lookRouter = express.Router();
 
 // Route for registering a new user
 userRouter.get("/api/users/current", authMiddleware, userController.get);
@@ -58,24 +62,15 @@ productRouter.patch("/api/products/:id", authMiddleware, productController.updat
 productRouter.delete("/api/products/:id", authMiddleware, productController.remove);
 
 
-// Route for registering a new product texture
-productTextureRouter.post("/api/product-texture", authMiddleware, productTextureController.register);
-
-// Route for update details of a specific product texture by ID
-productTextureRouter.patch("/api/product-texture", authMiddleware, productTextureController.update);
-
-// Route for delete a specific product texture by ID
-productTextureRouter.delete("/api/product-texture", authMiddleware, productTextureController.remove);
-
 
 // Route for getting a product note
-productTextureRouter.get("/api/product-note", authMiddleware, productNoteController.get);
+productNoteRouter.get("/api/product-note", authMiddleware, productNoteController.get);
 
 // Route for registering a new product note
-productTextureRouter.post("/api/product-note", authMiddleware, productNoteController.add);
+productNoteRouter.post("/api/product-note", authMiddleware, productNoteController.add);
 
 // Route for update product note
-productTextureRouter.patch("/api/product-notes", authMiddleware, productNoteController.update);
+productNoteRouter.patch("/api/product-notes", authMiddleware, productNoteController.update);
 
 
 
@@ -197,12 +192,31 @@ appBannerRouter.delete("/api/app-banner/", authMiddleware, appBannerController.r
 // Route for add a survei
 surveiRouter.post("/api/survei-custom/", authMiddleware, surveiController.add);
 
-// Route for get a specific survei
-surveiRouter.get("/api/survei-custom/", authMiddleware, surveiController.get);
+// Route for add a designer
+designerRouter.post("/api/designer", authMiddleware, designerController.register);
 
+// Route for update a designer
+designerRouter.patch("/api/designer", authMiddleware, designerController.update);
+
+// Route for update a designer
+designerRouter.delete("/api/designer", authMiddleware, designerController.remove);
 
 // Route for add a custom design
 customDesignRouter.post("/api/order/custom-design/", authMiddleware, customDesignController.add);
+
+
+// Route for add a designer
+lookRouter.post("/api/designer/look", authMiddleware, lookController.register);
+
+// Route for update a designer
+lookRouter.patch("/api/designer/look", authMiddleware, lookController.update);
+
+
+// Route for add a texture for look
+lookTextureRouter.post("/api/designer/look/texture", authMiddleware, textureController.register);
+
+// Route for update a texture for look
+lookTextureRouter.patch("/api/designer/look/texture", authMiddleware, textureController.update);
 
 
 export {
@@ -220,5 +234,8 @@ export {
     surveiRouter,
     customDesignRouter,
     productTermsRouter,
-    productTextureRouter
+    lookTextureRouter,
+    productNoteRouter,
+    designerRouter,
+    lookRouter
 };
