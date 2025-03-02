@@ -10,10 +10,10 @@ import axios from "axios"; // Import axios untuk request ke API Xendit
 
 const XENDIT_SECRET_KEY = process.env.XENDIT_API // Ganti dengan Secret Key Anda
 
-const createOrder = async (body, buyerId,email, address) => {
+const createOrder = async (body, buyerId, email, address) => {
   const totalPrice = body.total_price || 0;
-  let rtwPrice = 0;
-  let customPrice = 0;
+  let rtwPrice = body.rtw_price || 0;
+  let customPrice = body.custom_price|| 0;
 
   let orderItems = [];
 
@@ -27,122 +27,137 @@ const createOrder = async (body, buyerId,email, address) => {
       throw new ResponseError(400, "Cart is empty. Cannot create order.");
     }
 
-
-
     // Prepare items from cart
     for (const item of cartItems) {
-      const product = await prismaClient.product.findFirst({
-        where: { id: item.product_id },
+      if (item.look_id) {
+        // Order Custom
+        const look = await prismaClient.look.findFirst({
+          where: { id: item.look_id },
+        });
+
+        if (!look) {
+          throw new ResponseError(400, `Custom Look with ID: ${item.look_id} not found.`);
+        }
+          
+        customPrice += item.price * item.quantity;
+
+        orderItems.push({
+          look_id: item.look_id,
+          quantity: item.quantity,
+          size: item.size,
+          price: item.price,
+          custom_design: item.custom_design,
+        });
+      } else {
+        // Order RTW
+        const product = await prismaClient.product.findFirst({
+          where: { id: item.product_id },
+        });
+
+        if (!product) {
+          throw new ResponseError(400, `Product with ID: ${item.product_id} not found.`);
+        }
+
+        rtwPrice += item.price * item.quantity;
+
+        orderItems.push({
+          product_id: item.product_id,
+          quantity: item.quantity,
+          size: item.size,
+          price: item.price,
+          custom_design: item.custom_design,
+        });
+      }
+    }
+  } else if (body.product_id || body.look_id) {
+    if (body.look_id) {
+      // Buy Now Custom Order
+      const look = await prismaClient.look.findFirst({
+        where: { id: body.look_id },
       });
-    
+
+      if (!look) {
+        throw new ResponseError(400, `Custom Look with ID: ${body.look_id} not found.`);
+      }
+
+      customPrice = body.price * body.quantity;
+
+      orderItems.push({
+        quantity: body.quantity,
+        size: body.size,
+        price: look.price || 0,
+        custom_design: body.custom_design,
+        look: {
+          connect: { id: body.look_id },
+        },
+      });
+    } else {
+      // Buy Now RTW Order
+      const product = await prismaClient.product.findFirst({
+        where: { id: body.product_id },
+      });
 
       if (!product) {
-        throw new ResponseError(400, `Product with ID : ${item.product_id} not found.`);
+        throw new ResponseError(400, `Product with ID: ${body.product_id} not found.`);
       }
 
-      if (product.type === 1) {
-        rtwPrice = product.price * item.quantity;
-      } else {
-        customPrice = product.price * item.quantity;
-      }
-    
+      rtwPrice = product.price * body.quantity;
+
       orderItems.push({
-        product_id: item.product_id,
-        quantity: item.quantity,
-        size: item.size,
-        price: item.price,
-        custom_design: item.custom_design,
+        quantity: body.quantity,
+        size: body.size,
+        price: product.price || 0,
+        custom_design: body.custom_design,
+        product: {
+          connect: { id: body.product_id },
+        },
       });
     }
-  } else if (body.product_id && body.quantity) {
-
-    const product = await prismaClient.product.findFirst({
-      where: { id: body.product_id },
-    });
-  
-
-    if (!product) {
-      throw new ResponseError(400, `Product with ID : ${body.product_id} not found.`);
-    }
-
-    if (product.type === 1) {
-      rtwPrice = product.price * body.quantity;
-    } else {
-      customPrice = product.price * body.quantity;
-    }
-    // Prepare items for "Buy Now"
-    orderItems.push({      
-      quantity: body.quantity,
-      size: body.size, // Optional size
-      price: product.price || 0, // Ensure price is 
-      custom_design : body.custom_design,
-      product: {
-        connect: { id: body.product_id }, // Sambungkan ke produk yang sudah ada
-      },  
-    });
-    
   } else {
-    throw new ResponseError(400, "Invalid request. Missing cart_id or product details.");
+    throw new ResponseError(400, "Invalid request. Missing cart_id, product_id, or look_id.");
   }
 
   // Create order with associated items
   const order = await prismaClient.order.create({
     data: {
       id: uuid(),
-      buyer_address : address,
-      buyer_id: buyerId,
-      shipping_id: body.shipping_id,
-      packaging_id: body.packaging_id,
+      buyer_address: address,
       rtw_price: rtwPrice,
       packaging_price: body.packaging_price,
       shipping_price: body.shipping_price,
-      custom_price: customPrice,
-      discount : body.discount,
+      custom_price: body.custom_price,      
+      discount: body.discount,
       total_price: totalPrice,
+      buyer : {
+        connect : {id : buyerId}
+      },
+      shipping : {
+        connect : {id : body.shipping_id}
+      },
+      packaging : {
+        connect : {id : body.packaging_id}
+      },
       order_created: body.order_created || new Date(),
       order_status: body.order_status || "WAITING FOR PAYMENT",
       last_update: new Date(),
-      resi : body.resi,
-      description : body.description,
+      resi: body.resi,
+      description: body.description,
       items: {
         create: orderItems,
       },
     },
-    select: {
-      id: true,
-      buyer_address : true,
-      buyer_id: true,      
-      shipping_id: true,
-      packaging_id: true,
-      total_price: true,
-      rtw_price: true,
-      packaging_price: true,
-      shipping_price: true,
-      custom_price: true,
-      discount : true,
-      order_created: true,
-      order_status: true,
-      last_update: true,
-      items: true,
-      payment_url: true,
-      resi : true,
-      description : true,
-      payment_date : true,
-      xendit_status : true,
-      payment_method : true,
-    },
   });
-
+  
 
   // ===== Integrasi ke Xendit =====
   try {
     const xenditResponse = await axios.post(
       "https://api.xendit.co/v2/invoices",
       {
-        external_id: order.id, // ID unik untuk menghubungkan order
-        amount: totalPrice, // Total harga
-        payer_email: email, // Email pembeli
-        description: `Payment for Order ${order.id}`,
+        external_id: order.id,
+        amount: totalPrice,
+        payer_email: email,
+        description: `PRODUCT`,
       },
       {
         headers: {
@@ -161,30 +176,7 @@ const createOrder = async (body, buyerId,email, address) => {
       where: { id: order.id },
       data: {
         payment_url: invoice_url,
-        expiry_date: new Date(expiry_date), // Pastikan database menyimpan expiry_date
-      },
-      select: {
-        id: true,
-        buyer_address : true,
-        buyer_id: true,      
-        shipping_id: true,
-        packaging_id: true,
-        total_price: true,
-        rtw_price: true,
-        packaging_price: true,
-        shipping_price: true,
-        custom_price: true,
-        discount : true,
-        order_created: true,
-        order_status: true,
-        last_update: true,
-        items: true,
-        payment_url: true,
-        resi : true,
-        payment_date : true,
-        xendit_status : true,
-        payment_method : true,
-        description : true,
+        expiry_date: new Date(expiry_date),
       },
     });
 
@@ -203,12 +195,11 @@ const createOrder = async (body, buyerId,email, address) => {
   } catch (error) {
     throw new ResponseError(
       500,
-      `Failed to create payment invoice: ${
-        error.response?.data?.message || error.message
-      }`
+      `Failed to create payment invoice: ${error.response?.data?.message || error.message}`
     );
   }
 };
+
 
 // Get Order by ID
 const getOrder = async (buyer_id) => {

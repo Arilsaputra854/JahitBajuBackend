@@ -6,33 +6,44 @@ const router = express.Router();
 const createOrder = async (req, res) => {
   try {
     // Data dari webhook
-    const { id, external_id, status, paid_at, payment_method } = req.body;
-    console.log(req.body);
+    const { id, external_id, status, paid_at, payment_method, description } =
+      req.body;
 
-    // Pastikan webhook berasal dari Xendit (opsional, misalnya dengan verifikasi IP atau signature)
 
-    if (status === "PAID") {
-      // Update status order menjadi 'PROCESS'
-      await prismaClient.order.update({
-        where: { id: external_id }, // external_id di Xendit sesuai dengan order.id
-        data: {
-          payment_date: paid_at,
-          xendit_status : status,
-          payment_method: payment_method,
-          order_status: "PROCESS",
-          last_update: new Date(),
-        },
-      });
-
+    if (description == "PRODUCT") {
+      if (status === "PAID") {
+        // Update status order menjadi 'PROCESS'
+        await prismaClient.order.update({
+          where: { id: external_id }, // external_id di Xendit sesuai dengan order.id
+          data: {
+            payment_date: paid_at,
+            xendit_status: status,
+            payment_method: payment_method,
+            order_status: "PROCESS",
+            last_update: new Date(),
+          },
+        });
+      }
+    }
+    if (description == "CUSTOMIZATION") {
+      if (status === "PAID") {
+        
+        await prismaClient.user.update({
+          where: { id: external_id },
+          data: {
+            custom_access : true
+          },
+        });
+      }
     }
 
     // Berikan respons sukses ke Xendit
-    res.status(200).send({ message: "Webhook processed successfully" });
+    res.status(200).send({ message: "webhook processed successfully" });
   } catch (error) {
-    console.error("Error processing webhook:", error.message);
+    console.error("error processing webhook:", error.message);
 
     // Berikan respons gagal ke Xendit
-    res.status(500).send({ message: "Failed to process webhook" });
+    res.status(500).send({ message: "failed to process webhook" });
   }
 };
 

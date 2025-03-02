@@ -12,9 +12,6 @@ const register = async (request) => {
         data: {
             ...productData,
             id: uuid(), 
-        },
-        include : {
-            textures : true
         }
     });
 };
@@ -26,9 +23,6 @@ const get = async (id) => {
     const product = await prismaClient.product.findUnique({
         where: {
             id: id
-        },
-        include : {
-            textures : true
         }
     });
 
@@ -75,10 +69,7 @@ const update = async (id, request) => {
 
     return prismaClient.product.update({
         where: { id: id },
-        data: updatedProductDataWithLastUpdate,
-        include : {
-            textures : true
-        }
+        data: updatedProductDataWithLastUpdate
     });
 };
 const remove = async (id) => {
@@ -98,11 +89,7 @@ const remove = async (id) => {
 };
 
 const list = async () => {
-    const products = await prismaClient.product.findMany({
-        include : {
-            textures : true
-        }
-    });
+    const products = await prismaClient.product.findMany();
   
     
     return products;

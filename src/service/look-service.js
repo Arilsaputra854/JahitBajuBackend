@@ -15,7 +15,7 @@ const register = async (body) => {
 };
 
 const get = async (body) => {
-    const look = await prismaClient.look.findUnique({
+    const look = await prismaClient.look.findFirst({
         where: { id: body.id },
         include: {
             textures: {

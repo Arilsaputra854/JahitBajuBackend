@@ -5,7 +5,6 @@ import { validate } from "../validation/validation.js";
 // Create Order
 const createOrder = async (req, res, next) => {
     try {
-    console.log("body data: ",req.body);
        const body = validate(validateOrder,req.body);
         
         // Call orderService untuk membuat order dengan data lengkap

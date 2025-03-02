@@ -3,6 +3,7 @@ import Joi from "joi";
 const registerLookValidation = Joi.object({
   designer_id: Joi.string().required(),
   name: Joi.string().max(100).required(),
+  design_url: Joi.string().required(),
   features: Joi.array().items(Joi.string().max(50)).optional(),
   description: Joi.string().max(1000).required(),
   size: Joi.array()
@@ -10,6 +11,8 @@ const registerLookValidation = Joi.object({
     .required(),
   sold: Joi.number().integer().min(0).optional(),
   seen: Joi.number().integer().min(0).optional(),
+  look_price: Joi.number().integer().min(0).required(),
+  price: Joi.number().integer().min(0).required(),
   textures: Joi.array()
     .items(
       Joi.object({
@@ -23,6 +26,7 @@ const registerLookValidation = Joi.object({
 const updateLookValidation = Joi.object({
   designer_id: Joi.number().integer().optional(),
   name: Joi.string().max(100).optional(),
+  design_url: Joi.string().required(),
   features: Joi.array().items(Joi.string().max(50)).optional(),
   description: Joi.string().max(1000).optional(),
   size: Joi.array()
@@ -30,6 +34,8 @@ const updateLookValidation = Joi.object({
     .required(),
   sold: Joi.number().integer().min(0).optional(),
   seen: Joi.number().integer().min(0).optional(),
+  look_price: Joi.number().integer().min(0).required(),
+  price: Joi.number().integer().min(0).optional(),
   textures: Joi.array()
     .items(
       Joi.object({

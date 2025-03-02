@@ -15,6 +15,7 @@ import careGuideController from "../controller/care-guide-controller.js";
 import designerController from "../controller/designer-controller.js";
 import lookController from "../controller/look-controller.js";
 import textureController from "../controller/texture-controller.js";
+import customizationAccessController from "../controller/customization-access-controller.js";
 
 
 const publicRouter = express.Router()
@@ -81,8 +82,11 @@ publicRouter.get("/api/designer/", designerController.get);
 publicRouter.get("/api/designer/look/", lookController.get);
 
 
-// Route for get a looks
+// Route for get a texture
 publicRouter.get("/api/designer/look/texture", textureController.get);
+
+// Route for get a looks
+publicRouter.get("/api/customization-feature", customizationAccessController.get);
 
 
 export {

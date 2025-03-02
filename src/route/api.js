@@ -18,6 +18,8 @@ import productNoteController from "../controller/product-note-controller.js";
 import designerController from "../controller/designer-controller.js";
 import lookController from "../controller/look-controller.js";
 import textureController from "../controller/texture-controller.js";
+import customizationAccessController from "../controller/customization-access-controller.js";
+import featureController from "../controller/feature-controller.js";
 
 const userRouter = express.Router();
 const productRouter = express.Router();
@@ -37,6 +39,8 @@ const lookTextureRouter = express.Router();
 const productNoteRouter = express.Router();
 const designerRouter = express.Router();
 const lookRouter = express.Router();
+const featureRouter = express.Router();
+const customizationAccessRouter = express.Router();
 
 // Route for registering a new user
 userRouter.get("/api/users/current", authMiddleware, userController.get);
@@ -219,6 +223,14 @@ lookTextureRouter.post("/api/designer/look/texture", authMiddleware, textureCont
 lookTextureRouter.patch("/api/designer/look/texture", authMiddleware, textureController.update);
 
 
+// Route for add customization feature
+customizationAccessRouter.post("/api/customization-feature", authMiddleware, customizationAccessController.register);
+
+// Route for update customization feature detail
+customizationAccessRouter.patch("/api/customization-feature", authMiddleware, customizationAccessController.update);
+
+featureRouter.post("/api/feature/customization", authMiddleware, featureController.buyCustomizationFeature);
+
 export {
     userRouter,
     productRouter,
@@ -237,5 +249,7 @@ export {
     lookTextureRouter,
     productNoteRouter,
     designerRouter,
-    lookRouter
+    lookRouter,
+    featureRouter,
+    customizationAccessRouter
 };

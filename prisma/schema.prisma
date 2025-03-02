@@ -32,11 +32,14 @@ model User {
   carts         Cart[]         @relation("UserCarts") // Relasi One-to-Many ke Order
   favorites     Favorite[]     @relation("UserFavorites")
   survei_custom SurveiCustom[] @relation("SurveiCustom")
+  look_access   LookAccess[]
 
   otps OTP[] @relation("UserOTP")
 
   @@map("users")
+  user_customization UserCustomization[]
 }
+
 
 model Favorite {
   id         Int     @id @default(autoincrement())
@@ -68,7 +71,7 @@ model Product {
   weight      Int?    @default(0)
   colors      Json?    @default("[]")
   features    Json?    @default("[]")
-  last_update DateTime @default(now())
+  last_update DateTime @updatedAt
   
   orderItems OrderItem[] @relation("ProductOrderItem")
   favorites  Favorite[]  @relation("ProductFavorites")
@@ -90,8 +93,9 @@ model Cart {
 
 model CartItem {
   id            String  @id @default(uuid()) @db.VarChar(100)
-  cart_id        String  @db.VarChar(100) // Foreign Key ke Cart
-  product_id     String  @db.VarChar(100) // Foreign Key ke Product
+  cart_id        String  @db.VarChar(100)
+  product_id     String?  @db.VarChar(100) 
+  look_id        String?  @db.VarChar(100) 
   quantity      Int     @default(1)
   size          String  @db.VarChar(10)
   price         Float   @db.Float // Harga saat pembelian
@@ -139,7 +143,7 @@ model Order {
   discount        Float    @default(0) @db.Float
   order_created   DateTime @default(now()) // Default to current date-time
   order_status    String
-  last_update     DateTime @default(now())
+  last_update     DateTime @updatedAt
   payment_url     String   @default("")
   expiry_date     DateTime @default(now())
   resi            String   @default("-")
@@ -159,14 +163,16 @@ model Order {
 model OrderItem {
   id               String  @id @default(uuid()) @db.VarChar(100)
   order_id         String  @db.VarChar(100)
-  product_id       String  @db.VarChar(100)
+  product_id       String?  @db.VarChar(100)
+  look_id       String?  @db.VarChar(100)
   quantity         Int     @default(1)
   size             String  @db.VarChar(10)
   price            Float   @db.Float
   custom_design String? @unique @db.VarChar(100)
 
   order        Order         @relation(fields: [order_id], references: [id])
-  product      Product       @relation(fields: [product_id], references: [id], name: "ProductOrderItem")
+  product      Product?       @relation(fields: [product_id], references: [id], name: "ProductOrderItem")
+  look      Look?       @relation(fields: [look_id], references: [id], name: "LookOrderItem")
   
 
   @@map("order_items")
@@ -256,7 +262,6 @@ model Designer {
   name  String
   looks Look[]
 
-
   @@map("designers")
 }
 
@@ -264,17 +269,33 @@ model Designer {
 model Look {
   id          String @id @default(uuid()) @db.VarChar(100)
   designer_id  String
+  design_url  String?   @db.Text 
   designer    Designer     @relation(fields: [designer_id], references: [id], onDelete: Cascade)
   name        String
   features    Json?
+  price       Float    @db.Float @default(0)
+  look_price       Float    @db.Float @default(0)
   description String?
   size        Json?
   lastUpdate  DateTime     @updatedAt
   sold        Int          @default(0)
   seen        Int          @default(0)
   textures    LookTexture[]
+  look_access LookAccess[]
 
+  
+  orderItems OrderItem[] @relation("LookOrderItem")
   @@map("look")
+}
+
+
+model LookAccess {
+  id       String @id @default(uuid())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+  look     Look   @relation(fields: [lookId], references: [id])
+  lookId   String
+  purchasedAt DateTime @default(now())
 }
 
 model LookTexture {
@@ -300,3 +321,31 @@ model Texture {
 
   @@map("textures")
 }
+
+model CustomizationAccess {
+  id          String  @id @default(uuid()) @db.VarChar(100)
+  name        String  // Nama fitur (misal: "Custom Baju")
+  description String?
+  price       Float   @db.Float // Harga bisa berubah sewaktu-waktu
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+
+  @@map("customization_access")
+  UserSubscription UserCustomization[]
+}
+
+model UserCustomization {
+  id              String  @id @default(uuid()) @db.VarChar(100)
+  user_id          String
+  user            User   @relation(fields: [user_id], references: [id])
+  customization_id  String
+  customization    CustomizationAccess @relation(fields: [customization_id], references: [id])
+  
+  priceAtPurchase Float   @db.Float  
+  purchasedAt     DateTime @default(now())
+
+  @@map("user_customization")
+}
+
+
