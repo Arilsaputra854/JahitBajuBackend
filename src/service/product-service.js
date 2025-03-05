@@ -39,7 +39,7 @@ const getByLastUpdate = async () => {
     const product = await prismaClient.product.findMany({
         select: {
             id: true,
-            last_update : true
+            last_update : true,
         },
         orderBy: {
             last_update: 'desc',
@@ -89,7 +89,13 @@ const remove = async (id) => {
 };
 
 const list = async () => {
-    const products = await prismaClient.product.findMany();
+    const products = await prismaClient.product.findMany(
+        {
+            where : {
+                enable : true
+            }
+        }
+    );
   
     
     return products;

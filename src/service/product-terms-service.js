@@ -33,13 +33,8 @@ const updateProductTerms = async (body) => {
 
     const productTermUpdated = await prismaClient.productTerms.update({
         where: { id : body.id },
-        data: body.data,
-        select: {
-            id: true,
-            color : true,
-            size : true,
-            texture : true,
-        },
+        data: {last_update: new Date(),
+            ...body.data},
     });
 
     return productTermUpdated;

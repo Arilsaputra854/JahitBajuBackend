@@ -88,7 +88,7 @@ const saveOTP = async (userId, otp, type) => {
       otp: encryptedOTP,
       iv: iv,
       type : type,
-      expiresAt,
+      expires_at : expiresAt,
     },
   });
 };
@@ -102,7 +102,7 @@ export const generateAndSendOTP = async (userId, email, type) => {
   // delete OTP if expired
   await prismaClient.oTP.deleteMany({
     where: {
-      expiresAt: {
+      expires_at: {
         lt: new Date(), 
       },
     },
@@ -137,7 +137,7 @@ export const validateOTP = async (userId, otp, type) => {
     }
 
     //if OTP is expired
-    if (new Date() > new Date(otpRecord.expiresAt)) {
+    if (new Date() > new Date(otpRecord.expires_at)) {
       throw new ResponseError(400, "OTP has expired");
     }
 

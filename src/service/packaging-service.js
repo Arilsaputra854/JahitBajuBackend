@@ -20,7 +20,8 @@ const addPackaging = async (req) => {
                 id : uuid(),
                 name : body.name,
                 description : body.description,
-                price : body.price
+                price : body.price,
+                last_update: new Date()
             },
         });
     }

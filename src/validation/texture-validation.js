@@ -7,7 +7,7 @@ const registerTextureValidation = Joi.object({
   hex: Joi.string()
     .pattern(/^#[0-9A-Fa-f]{6}$/)
     .optional(),
-  description: Joi.string().max(1000).optional(),
+  description: Joi.string().max(1000).required(),
   looks: Joi.array()
     .items(
       Joi.object({
@@ -17,7 +17,7 @@ const registerTextureValidation = Joi.object({
       })
     )
     .optional(),
-});
+}).xor("hex", "url_texture");
 
 const updateTextureValidation = Joi.object({
   title: Joi.string().max(100).optional(),
@@ -25,7 +25,7 @@ const updateTextureValidation = Joi.object({
   hex: Joi.string()
     .pattern(/^#[0-9A-Fa-f]{6}$/)
     .optional(),
-  description: Joi.string().max(1000).optional(),
+  description: Joi.string().max(1000).required(),
   looks: Joi.array()
     .items(
       Joi.object({
@@ -35,6 +35,6 @@ const updateTextureValidation = Joi.object({
       })
     )
     .optional(),
-});
+}).xor("hex", "url_texture");
 
 export { registerTextureValidation, updateTextureValidation };

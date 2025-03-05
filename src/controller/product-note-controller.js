@@ -20,9 +20,9 @@ const get = async (req, res, next) => {
   try {
     const type = req.query.type
     var result
-    if(type == "rtw"){
+    if(type == 1){
       result = await productNoteService.getRtw();
-    }else if (type == "custom"){
+    }else if (type == 2){
       result = await productNoteService.getCustome();
     }else{
       result = await productNoteService.getAll();

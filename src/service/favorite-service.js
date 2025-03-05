@@ -1,6 +1,6 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
-import { validateOrder } from "../validation/order-validation.js";
+import { validateOrder } from "../validation/order-product-validation.js";
 import { v4 as uuid } from "uuid";
 
 const addFavorite = async (request) => {
@@ -12,8 +12,6 @@ const addFavorite = async (request) => {
   if (!product) {
     throw new ResponseError(400, "Product not found.");
   }
-
-  console.log(request)
 
   // Tambahkan favorite
   const favorite = await prismaClient.favorite.create({

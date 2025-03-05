@@ -7,7 +7,6 @@ import favoriteController from "../controller/favorite-controller.js";
 import xenditController from "../controller/xendit-controller.js";
 import termConditionController from "../controller/term-condition-controller.js";
 import sizeGuideController from "../controller/size-guide-controller.js";
-import surveiController from "../controller/survei-controller.js";
 import appBannerController from "../controller/app-banner-controller.js";
 import customDesignController from "../controller/custom-design-controller.js";
 import productTermsController from "../controller/product-terms-controller.js";
@@ -15,7 +14,7 @@ import careGuideController from "../controller/care-guide-controller.js";
 import designerController from "../controller/designer-controller.js";
 import lookController from "../controller/look-controller.js";
 import textureController from "../controller/texture-controller.js";
-import customizationAccessController from "../controller/customization-access-controller.js";
+import appFeatureController from "../controller/app-feature-controller.js";
 
 
 const publicRouter = express.Router()
@@ -63,9 +62,6 @@ publicRouter.get("/api/size-guide", sizeGuideController.get);
 // Route for getting Panduan Perawatan
 publicRouter.get("/api/care-guide", careGuideController.get);
 
-// Route for getting survei custom data
-publicRouter.get("/api/survei-custom/all", surveiController.getAll);
-
 
 // Route for get a app banner
 publicRouter.get("/api/app-banner/", appBannerController.get);
@@ -85,8 +81,8 @@ publicRouter.get("/api/designer/look/", lookController.get);
 // Route for get a texture
 publicRouter.get("/api/designer/look/texture", textureController.get);
 
-// Route for get a looks
-publicRouter.get("/api/customization-feature", customizationAccessController.get);
+// Route for get a app features
+publicRouter.get("/api/app-feature/", appFeatureController.getFeature);
 
 
 export {

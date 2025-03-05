@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `products` ADD COLUMN `last_update` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3);

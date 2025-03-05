@@ -4,7 +4,7 @@ const registerLookValidation = Joi.object({
   designer_id: Joi.string().required(),
   name: Joi.string().max(100).required(),
   design_url: Joi.string().required(),
-  features: Joi.array().items(Joi.string().max(50)).optional(),
+  features: Joi.array().items(Joi.string().max(50)).required(),
   description: Joi.string().max(1000).required(),
   size: Joi.array()
     .items(Joi.string().valid("XS", "S", "M", "L", "XL", "XXL", "ALL SIZE"))

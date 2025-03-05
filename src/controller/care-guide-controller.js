@@ -29,8 +29,7 @@ const get = async (req, res, next) => {
 
 const update = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const result = await careGuideService.update(id,req.body);
+        const result = await careGuideService.update(req.body);
         res.status(200).json({error : false, data: result });
     } catch (e) {
         next(e);

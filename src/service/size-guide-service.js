@@ -33,11 +33,10 @@ const updateSizeGuide = async (body) => {
     
     const sizeGuideUpdated = await prismaClient.sizeGuide.update({
         where: { id : body.id },
-        data: body.data,
-        select: {
-            id: true,
-            data:true
-        },
+        data: {
+            data : body.data,
+            last_update : new Date()
+        },        
     });
 
     return sizeGuideUpdated;

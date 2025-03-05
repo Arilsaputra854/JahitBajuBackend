@@ -54,14 +54,8 @@ const updateShippingMethod = async (req) => {
     // Update the cart item
     const updatedShippingMethod = await prismaClient.shipping.update({
         where: { id : body.id },
-        data: updateData,
-        select: {
-            id: true,
-            name: true,
-            price: true,
-            img_url : true,
-            type : true
-        },
+        data: {last_update: new Date(),
+            ...updateData},
     });
 
     return updatedShippingMethod;
@@ -69,10 +63,7 @@ const updateShippingMethod = async (req) => {
 
 
 const listShippingMethods = async () => {
-    return prismaClient.shipping.findMany({
-        
-        select: { id: true, name: true, price:true, img_url : true, type : true},
-    });
+    return prismaClient.shipping.findMany();
 };
 
 
@@ -90,8 +81,7 @@ const removeShippingMethods = async (body) => {
 const getShipingMethod = async (id) => {
 
     let shippingMethod = await prismaClient.shipping.findFirst({
-        where: { id : id },
-        select: { id: true, name: true, price:true, img_url : true, type : true},
+        where: { id : id },        
     });
 
     if (!shippingMethod) throw new ResponseError(404, "Shipping method not found");

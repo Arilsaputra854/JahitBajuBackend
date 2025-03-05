@@ -7,7 +7,7 @@ const addAppBanner = async (body) => {
     var appBanner = await prismaClient.appBanner.create({
         data: {
             image_url : body.image_url,
-            link : body.link
+            link : body.link            
         },
     });
 
@@ -32,12 +32,8 @@ const updateAppBanner = async (body) => {
         data: {
             image_url: body.image_url,
             link: body.link,
-        },
-        select: {
-            id: true,
-            image_url: true,
-            link: true,
-        },
+            last_update : new Date()
+        }
     });
 
     return appBannerUpdated;

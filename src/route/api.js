@@ -2,14 +2,13 @@ import express from "express";
 import userController from "../controller/user-controller.js";
 import { authMiddleware } from "../middleware/auth-middleware.js";
 import productController from "../controller/product-controller.js";
-import orderController from "../controller/order-controller.js";
+import orderController from "../controller/order-product-controller.js";
 import cartController from "../controller/cart-controller.js";
 import packagingController from "../controller/packaging-controller.js";
 import shippingMethodController from "../controller/shipping-method-controller.js";
 import favoriteController from "../controller/favorite-controller.js";
 import termConditionController from "../controller/term-condition-controller.js";
 import sizeGuideController from "../controller/size-guide-controller.js";
-import surveiController from "../controller/survei-controller.js";
 import appBannerController from "../controller/app-banner-controller.js";
 import customDesignController from "../controller/custom-design-controller.js";
 import productTermsController from "../controller/product-terms-controller.js";
@@ -18,8 +17,9 @@ import productNoteController from "../controller/product-note-controller.js";
 import designerController from "../controller/designer-controller.js";
 import lookController from "../controller/look-controller.js";
 import textureController from "../controller/texture-controller.js";
-import customizationAccessController from "../controller/customization-access-controller.js";
-import featureController from "../controller/feature-controller.js";
+import appFeatureController from "../controller/app-feature-controller.js";
+import orderLookController from "../controller/order-look-controller.js";
+import lookAccessController from "../controller/look-access-controller.js";
 
 const userRouter = express.Router();
 const productRouter = express.Router();
@@ -31,7 +31,6 @@ const favoriteRoute = express.Router();
 const termConditionRoute = express.Router();
 const sizeGuideRoute = express.Router();
 const careGuideRoute = express.Router();
-const surveiRouter = express.Router();
 const appBannerRouter = express.Router();
 const customDesignRouter = express.Router();
 const productTermsRouter = express.Router();
@@ -39,8 +38,10 @@ const lookTextureRouter = express.Router();
 const productNoteRouter = express.Router();
 const designerRouter = express.Router();
 const lookRouter = express.Router();
-const featureRouter = express.Router();
-const customizationAccessRouter = express.Router();
+const lookOrderRouter = express.Router();
+const appFeatureRouter = express.Router();
+const lookAccessRouter = express.Router();
+
 
 // Route for registering a new user
 userRouter.get("/api/users/current", authMiddleware, userController.get);
@@ -193,9 +194,6 @@ appBannerRouter.patch("/api/app-banner/", authMiddleware, appBannerController.up
 appBannerRouter.delete("/api/app-banner/", authMiddleware, appBannerController.remove);
 
 
-// Route for add a survei
-surveiRouter.post("/api/survei-custom/", authMiddleware, surveiController.add);
-
 // Route for add a designer
 designerRouter.post("/api/designer", authMiddleware, designerController.register);
 
@@ -223,13 +221,25 @@ lookTextureRouter.post("/api/designer/look/texture", authMiddleware, textureCont
 lookTextureRouter.patch("/api/designer/look/texture", authMiddleware, textureController.update);
 
 
-// Route for add customization feature
-customizationAccessRouter.post("/api/customization-feature", authMiddleware, customizationAccessController.register);
+// Route for add feature 
+appFeatureRouter.post("/api/app-feature", authMiddleware, appFeatureController.createFeature);
 
-// Route for update customization feature detail
-customizationAccessRouter.patch("/api/customization-feature", authMiddleware, customizationAccessController.update);
+// Route for update feature 
+appFeatureRouter.patch("/api/app-feature", authMiddleware, appFeatureController.updateFeature);
 
-featureRouter.post("/api/feature/customization", authMiddleware, featureController.buyCustomizationFeature);
+// Route for buy feature 
+appFeatureRouter.post("/api/app-feature/buy", authMiddleware, appFeatureController.buyFeature);
+
+// Route for get buy feature 
+appFeatureRouter.get("/api/app-feature/buy/:id", authMiddleware, appFeatureController.getOrderFeature);
+
+
+// Route for buy look
+lookOrderRouter.post("/api/look/buy/", authMiddleware, orderLookController.createLookOrder);
+
+// Route for get look access
+lookAccessRouter.get("/api/look/:look_id", authMiddleware, lookAccessController.get);
+
 
 export {
     userRouter,
@@ -243,13 +253,13 @@ export {
     careGuideRoute,
     termConditionRoute,
     appBannerRouter,
-    surveiRouter,
     customDesignRouter,
     productTermsRouter,
     lookTextureRouter,
     productNoteRouter,
     designerRouter,
     lookRouter,
-    featureRouter,
-    customizationAccessRouter
+    appFeatureRouter,
+    lookOrderRouter,
+    lookAccessRouter
 };

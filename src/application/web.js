@@ -1,7 +1,7 @@
 import express from "express"
 import { publicRouter } from "../route/public-api.js";
 import { errorMiddleware } from "../middleware/error-middleware.js";
-import { productRouter, userRouter, orderRouter, cartRouter, shippingRouter, packagingRouter, favoriteRoute, termConditionRoute, sizeGuideRoute, appBannerRouter, surveiRouter, customDesignRouter, productTermsRouter, careGuideRoute, productNoteRouter, designerRouter, lookRouter, lookTextureRouter, customizationAccessRouter, featureRouter } from "../route/api.js";
+import { productRouter, userRouter, orderRouter, cartRouter, shippingRouter, packagingRouter, favoriteRoute, termConditionRoute, sizeGuideRoute, appBannerRouter, customDesignRouter, productTermsRouter, careGuideRoute, productNoteRouter, designerRouter, lookRouter, lookTextureRouter,appFeatureRouter, lookOrderRouter, lookAccessRouter } from "../route/api.js";
 
 export const web = express();
 web.use(express.json({ limit: '20mb' }));
@@ -20,15 +20,15 @@ web.use(termConditionRoute)
 web.use(sizeGuideRoute)
 web.use(careGuideRoute)
 web.use(appBannerRouter)
-web.use(surveiRouter)
 web.use(customDesignRouter)
 web.use(productTermsRouter)
 web.use(lookTextureRouter)
 web.use(productNoteRouter)
 web.use(designerRouter)
 web.use(lookRouter)
-web.use(customizationAccessRouter)
-web.use(featureRouter)
+web.use(appFeatureRouter)
+web.use(lookOrderRouter)
+web.use(lookAccessRouter)
 web.use(errorMiddleware)
 
 

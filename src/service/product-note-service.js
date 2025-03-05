@@ -32,7 +32,7 @@ const update = async (body) => {
 
     const productNoteUpdated = await prismaClient.productNote.update({
         where: { id : body.id },
-        data: {
+        data: {last_update: new Date(),
             ...body,
         }
     });

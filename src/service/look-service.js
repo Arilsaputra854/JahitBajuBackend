@@ -42,7 +42,9 @@ const update = async (id,body) => {
 
     return prismaClient.look.update({
         where: { id:body.id },
-        data: body,
+        data: {last_update: new Date(),
+            ...body
+        },
         include: {
             textures: {
                 include: {

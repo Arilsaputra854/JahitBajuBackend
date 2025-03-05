@@ -50,6 +50,7 @@ const update = async (id, request) => {
     return prismaClient.designer.update({
         where: { id: id },
         data: designerData,
+        last_update : new Date(),
         include: {
             looks: true
         }
