@@ -86,9 +86,9 @@ const requestOTP = async (userId, email) => {
   // Cek apakah sudah ada OTP yang valid
   const existingOtp = await prismaClient.oTP.findFirst({
     where: {
-      userId: userId,
+      user_id: userId,
       type: "EMAIL_VERIFICATION",
-      expiresAt: {
+      expires_at: {
         gte: new Date(), // Mengecek jika OTP masih berlaku
       },
     },
@@ -122,7 +122,7 @@ const requestResetOTP = async (body) => {
   // Cek apakah sudah ada OTP yang valid
   const existingOtp = await prismaClient.oTP.findFirst({
     where: {
-      userId: user.id,
+      user_id: user.id,
       type: "FORGOT_PASSWORD",
       expires_at: {
         gte: new Date(), // Mengecek jika OTP masih berlaku

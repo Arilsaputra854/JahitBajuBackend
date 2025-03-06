@@ -23,11 +23,6 @@ const addFavorite = async (request) => {
         connect: { id: request.body.product_id }, 
       },
     },
-    select: {
-      id: true,
-      user_id: true,
-      product_id: true,
-    },
   });
 
   return favorite;
@@ -40,11 +35,6 @@ const getFavoriteByUserId = async (user_id) => {
       user: {
         id: user_id,
       },
-    },
-    select: {
-      id: true,
-      user_id: true,
-      product_id: true,
     },
   });
 
@@ -72,13 +62,7 @@ const removeFavorite = async (id) => {
 
 // List Orders
 const getAllFavorites = async () => {
-  return prismaClient.favorite.findMany({
-    select: {
-      id: true,
-      user_id: true,
-      product_id: true,
-    },
-  });
+  return prismaClient.favorite.findMany();
 };
 
 const getProductFavoriteCount = async (product_id) => {

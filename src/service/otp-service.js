@@ -84,7 +84,7 @@ const saveOTP = async (userId, otp, type) => {
   //save to database
   await prismaClient.oTP.create({
     data: {
-      userId,
+      user_id : userId,
       otp: encryptedOTP,
       iv: iv,
       type : type,
@@ -123,7 +123,7 @@ export const validateOTP = async (userId, otp, type) => {
 
     //find OTP on database
     const otpRecord = await prismaClient.oTP.findFirst({
-      where: { userId: userId, type : type },
+      where: { user_id: userId, type : type },
     });
 
     // if not exists

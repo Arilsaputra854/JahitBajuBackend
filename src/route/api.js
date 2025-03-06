@@ -236,6 +236,8 @@ appFeatureRouter.get("/api/app-feature/buy/:id", authMiddleware, appFeatureContr
 
 // Route for buy look
 lookOrderRouter.post("/api/look/buy/", authMiddleware, orderLookController.createLookOrder);
+// Route for buy look
+lookOrderRouter.get("/api/look/buy/:id", authMiddleware, orderLookController.getLookOrder);
 
 // Route for get look access
 lookAccessRouter.get("/api/look/:look_id", authMiddleware, lookAccessController.get);

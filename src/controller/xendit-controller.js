@@ -28,7 +28,7 @@ const createOrder = async (req, res) => {
     if (description == "CUSTOMIZATION") {
       if (status === "PAID") {
         
-        await prismaClient.featureOrder.update({
+        const featureOrder = await prismaClient.featureOrder.update({
           where: {  id: external_id},
           data: {
             payment_status : status,
@@ -38,7 +38,7 @@ const createOrder = async (req, res) => {
         });
 
         await prismaClient.user.update({
-          where: { id: order.buyer_id },
+          where: { id: featureOrder.buyer_id },
           data: {
             custom_access : true
           },

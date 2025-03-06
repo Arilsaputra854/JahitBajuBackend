@@ -8,7 +8,7 @@ import { validate } from "../validation/validation.js";
 const getLookOrder = async (req, res, next) => {
     
     try {        
-        const id = req.query.type;
+        const id = req.params.id;
         if(!id)
             throw new ResponseError(400,"id is required.")
 
