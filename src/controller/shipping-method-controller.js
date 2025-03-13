@@ -1,4 +1,7 @@
 import shippingService from "../service/shipping-service.js";
+import { validateGetShippingMethod } from "../validation/shipping-method-validation.js";
+import { validate } from "../validation/validation.js";
+
 
 const add = async (req, res, next) => {
   try {
@@ -12,18 +15,17 @@ const add = async (req, res, next) => {
   }
 };
 
-const get = async (req, res, next) => {
-  const { id } = req.query;
-  var result;
+const get = async (req, res, next) => {  
+  let id = req.query.id;
+  let result;
   try {
-
-    if (id) {
-      result = await shippingService.getShipingMethod(id);
-    } else {
-      result = await shippingService.listShippingMethods();
+    const body = validate(validateGetShippingMethod,req.body)
+    if(!id){      
+      result = await shippingService.listShippingMethods(body,req.user);      
+    }else{
+      result = await shippingService.getShipingMethodById(id,body,req.user);
     }
-
-
+     
     res.status(200).json({
         error: false,
         data: result,
@@ -32,6 +34,7 @@ const get = async (req, res, next) => {
     next(e); // Pass the error to the error-handling middleware
   }
 };
+
 
 const update = async (req, res, next) => {
   try {
@@ -54,9 +57,39 @@ const remove = async (req, res, next) => {
   }
 };
 
+
+const listProvince = async (req, res, next) => {
+  try {
+    const result = await shippingService.listProvince();
+    res.status(200).json({
+        error: false,
+        data: result,
+      });
+  } catch (e) {
+    next(e); 
+  }
+};
+
+
+const listCity = async (req, res, next) => {
+  try {
+    const result = await shippingService.listCity();
+    res.status(200).json({
+        error: false,
+        data: result,
+      });
+  } catch (e) {
+    next(e); 
+  }
+};
+
+
+
 export default {
   add,
   get,
+  listProvince,
+  listCity,
   update,
   remove,
 };

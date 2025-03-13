@@ -10,6 +10,7 @@ const validateCart = (data) => {
                 look_id: Joi.string().max(100).optional(),
                 quantity: Joi.number().integer().min(1).required(),
                 price: Joi.number().positive().required(),
+                weight: Joi.number().required(),
                 size: Joi.string().max(10).required(),
             }).xor("product_id", "look_id")
         ).required()
@@ -25,6 +26,7 @@ const validateCartItem = (data) => {
         quantity: Joi.number().integer().min(1).required(),
         price: Joi.number().positive().required(),
         size: Joi.string().max(10).required(),
+        weight: Joi.number().required(),
         custom_design: Joi.optional()
     }).xor("product_id", "look_id"); 
 

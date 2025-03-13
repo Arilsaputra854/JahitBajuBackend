@@ -1,5 +1,6 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
+import shippingService from "./shipping-service.js";
 import { v4 as uuid } from "uuid";
 import dotenv from 'dotenv';
 
@@ -10,7 +11,7 @@ import axios from "axios"; // Import axios untuk request ke API Xendit
 
 const XENDIT_SECRET_KEY = process.env.XENDIT_API // Ganti dengan Secret Key Anda
 
-const createOrder = async (body, buyerId, email, address) => {
+const createOrder = async (body, buyerId, email, addressId) => {
   const totalPrice = body.total_price || 0;
   let rtwPrice = body.rtw_price || 0;
   let customPrice = body.custom_price|| 0;
@@ -45,7 +46,7 @@ const createOrder = async (body, buyerId, email, address) => {
           look_id: item.look_id,
           quantity: item.quantity,
           size: item.size,
-          price: item.price,
+          price: item.price,          
           custom_design: item.custom_design,
         });
       } else {
@@ -117,6 +118,25 @@ const createOrder = async (body, buyerId, email, address) => {
     throw new ResponseError(400, "Invalid request. Missing cart_id, product_id, or look_id.");
   }
 
+  const buyerAddress = await prismaClient.address.findFirst({
+    where : {
+      id : addressId
+    }
+  })
+
+  const responseCity = await shippingService.getCityById(buyerAddress.city);
+  const responseProvince = await shippingService.getProvinceById(buyerAddress.province);
+
+  const addressParts = [
+    buyerAddress.street_address,
+    responseCity.city_name,
+    responseProvince,
+    responseCity.postal_code
+  ];
+
+  
+  const address = addressParts.filter(Boolean).join(', ');
+
   // Create order with associated items
   const order = await prismaClient.order.create({
     data: {
@@ -125,7 +145,7 @@ const createOrder = async (body, buyerId, email, address) => {
       rtw_price: rtwPrice,
       packaging_price: body.packaging_price,
       shipping_price: body.shipping_price,
-      custom_price: body.custom_price,      
+      custom_price: customPrice,      
       discount: body.discount,
       total_price: totalPrice,
       buyer : {

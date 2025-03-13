@@ -117,9 +117,14 @@ cartRouter.delete("/api/cart/", authMiddleware, cartController.removeCart);
 cartRouter.delete("/api/cart/item/:itemId", authMiddleware, cartController.removeCartItem);
 
 
-
 // Route for updating a shipping
 shippingRouter.post("/api/shipping/", authMiddleware, shippingMethodController.add);
+
+// Route for get a shipping
+shippingRouter.get("/api/shipping/", authMiddleware, shippingMethodController.get);
+
+// Route for get all Shipping method
+shippingRouter.post("/api/shippings/", authMiddleware,shippingMethodController.get);
 
 // Route for updating a shipping
 shippingRouter.patch("/api/shipping/", authMiddleware, shippingMethodController.update);

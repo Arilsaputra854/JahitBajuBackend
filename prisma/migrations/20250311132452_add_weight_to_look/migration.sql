@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `looks` ADD COLUMN `weight` INTEGER NOT NULL DEFAULT 0;

@@ -7,7 +7,7 @@ import {
   registerUserValidation,
   updateUserValidation,
 } from "../validation/user-validation.js";
-import { generateAndSendOTP, validateOTP } from "../service/otp-service.js";
+import { generateAndSendOTP, validateOTP } from "./otp-service.js";
 import { validate } from "../validation/validation.js";
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
@@ -170,6 +170,9 @@ const get = async (id) => {
   const user = await prismaClient.user.findUnique({
     where: {
       id: id,
+    },
+    include : {
+      address  : true
     }
   });
 
@@ -186,6 +189,7 @@ const update = async (id, request) => {
 
   const userExists = await prismaClient.user.findUnique({
     where: { id: id },
+    include: { address: true }, // Ambil data alamat juga
   });
 
   if (!userExists) {
@@ -196,14 +200,43 @@ const update = async (id, request) => {
     userData.password = await bcrypt.hash(userData.password, 10);
   }
 
+
+  let addressUpdate = {};
+
+  if (request.address) {
+    addressUpdate = {
+      address: {
+        upsert: {
+          create: {
+            street_address: request.address.street_address,            
+            city: Number(request.address.city),
+            province: Number(request.address.province),
+            postal_code: Number(request.address.postal_code),
+          },
+          update: {
+            street_address: request.address.street_address,      
+            city: Number(request.address.city),
+            province: Number(request.address.province),
+            postal_code: Number(request.address.postal_code),
+            updated_at: new Date(),
+          },
+        },
+      },
+    };
+  }
+
+  // Gunakan transaksi Prisma agar update user & alamat dilakukan bersama
   return prismaClient.user.update({
     where: { id: id },
     data: {
       last_update: new Date(),
       ...userData,
+      ...addressUpdate, // Update alamat jika ada
     },
+    include: { address: true },
   });
 };
+
 
 // Delete user function
 const remove = async (id) => {

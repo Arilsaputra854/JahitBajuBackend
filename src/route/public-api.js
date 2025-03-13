@@ -37,10 +37,6 @@ publicRouter.get("/api/products", productController.get);
 // Route for getting latest datetime
 publicRouter.get("/api/products/latest", productController.getLatest);
 
-// Route for getting all Shipping
-publicRouter.get("/api/shipping", shippingMethodController.get);
-
-
 // Route for getting all Packaging
 publicRouter.get("/api/packaging", packagingController.get);
 
@@ -75,7 +71,7 @@ publicRouter.get("/api/designer/", designerController.get);
 
 
 // Route for get a looks
-publicRouter.get("/api/designer/look/", lookController.get);
+publicRouter.get("/api/designer/look", lookController.get);
 
 
 // Route for get a texture
@@ -83,6 +79,14 @@ publicRouter.get("/api/designer/look/texture", textureController.get);
 
 // Route for get a app features
 publicRouter.get("/api/app-feature/", appFeatureController.getFeature);
+
+
+// Route for get a list of province
+publicRouter.get("/api/shipping/provinces", shippingMethodController.listProvince);
+
+
+// Route for get a list of city
+publicRouter.get("/api/shipping/cities", shippingMethodController.listCity);
 
 
 export {

@@ -38,18 +38,22 @@ const addToCart = async (buyerId, body) => {
         data: {
           quantity: cartItem.quantity + body.quantity,
           price: body.price,
+          weight: cartItem.weight + body.weight,
           last_update: new Date(),
         },
       });
     } else {
       // Jika produk belum ada di keranjang, tambahkan sebagai item baru
+
       cartItem = await prismaClient.cartItem.create({
         data: {
           id: uuid(),
+          last_update: new Date(),
           cart_id: cart.id,
           product_id: body.product_id,
           quantity: body.quantity,
           price: body.price,
+          weight: body.weight,
           custom_design: body.custom_design,
           size: body.size,
         },
@@ -100,6 +104,7 @@ const addToCart = async (buyerId, body) => {
           last_update: new Date(),
           quantity: cartItem.quantity + body.quantity,
           price: body.price,
+          weight : body.weight
         },
       });
     } else {
@@ -112,6 +117,7 @@ const addToCart = async (buyerId, body) => {
           price: body.price,
           custom_design: body.custom_design,
           size: body.size,
+          weight : body.weight
         },
       });
     }
@@ -227,7 +233,7 @@ const removeCart = async (buyerId) => {
   });
   if (!cart) throw new ResponseError(404, "Cart not found");
 
-  await prismaClient.cartItem.deleteMany({ where: { cart_id: cart.id} });
+  await prismaClient.cartItem.deleteMany({ where: { cart_id: cart.id } });
   return prismaClient.cart.delete({ where: { id: cart.id } });
 };
 
@@ -281,8 +287,8 @@ const removeCartItem = async (buyerId, cartItemId) => {
     data: {
       total_price: newTotalPrice,
       rtw_price: newRtwPrice,
-      custom_price: newCustomPrice,      
-      last_update : new Date()
+      custom_price: newCustomPrice,
+      last_update: new Date(),
     },
   });
 

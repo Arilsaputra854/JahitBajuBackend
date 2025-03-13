@@ -8,7 +8,7 @@ const createOrder = async (req, res, next) => {
        const body = validate(validateOrder,req.body);
         
         // Call orderService untuk membuat order dengan data lengkap
-        const result = await orderService.createOrder(body,req.user.id, req.user.email, req.user.address);
+        const result = await orderService.createOrder(body,req.user.id, req.user.email, req.user.address_id);
 
         // Mengirimkan response dengan data order yang berhasil dibuat
         res.status(201).json({

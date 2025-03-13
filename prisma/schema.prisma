@@ -19,7 +19,7 @@ model User {
   email          String   @unique
   password       String   @db.VarChar(100)
   name           String   @db.VarChar(100)
-  address        String?  @db.Text
+  address_id        String?  @unique
   img_url        String?  @db.VarChar(100)
   phone_number   String?  @db.VarChar(20)
   token          String?  @db.VarChar(100)
@@ -40,6 +40,20 @@ model User {
   user_feature UserFeature[]
   FeatureOrder FeatureOrder[] @relation(name: "UserFeatureOrders")
   LookOrder LookOrder[] @relation(name: "UserLookOrders")
+  address Address? @relation(fields: [address_id], references: [id])
+}
+
+model Address {
+  id             String  @id @default(uuid())
+  street_address String  @db.Text        // Nama jalan + detail rumah
+  city           Int? // Kota / Kabupaten
+  province       Int? // Provinsi
+  postal_code    Int? 
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("addresses")
+  User User? @relation()
 }
 
 
@@ -102,6 +116,7 @@ model CartItem {
   product_id     String?  @db.VarChar(100) 
   look_id        String?  @db.VarChar(100) 
   quantity      Int     @default(1)
+  weight      Int     @default(0)
   size          String  @db.VarChar(10)
   price         Float   @db.Float // Harga saat pembelian
   custom_design String? 
@@ -115,9 +130,9 @@ model CartItem {
 model Shipping {
   id      String @id @default(uuid()) @db.VarChar(100)
   name    String @db.VarChar(100)
+  code    String? @db.VarChar(50)
   img_url String @db.VarChar(100)
   type    String @db.VarChar(100)
-  price   Float  @db.Float
   last_update     DateTime @updatedAt @default(now()) 
 
   orders Order[] @relation("ShippingOrders")
@@ -285,6 +300,7 @@ model Look {
   look_price       Float    @db.Float @default(0)
   description String?
   size        Json?
+  weight      Int          @default(0)
   sold        Int          @default(0)
   seen        Int          @default(0)
   textures    LookTexture[]

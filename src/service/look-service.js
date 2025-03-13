@@ -14,9 +14,9 @@ const register = async (body) => {
     });
 };
 
-const get = async (body) => {
+const get = async (id) => {
     const look = await prismaClient.look.findFirst({
-        where: { id: body.id },
+        where: { id: id },
         include: {
             textures: {
                 include: {
