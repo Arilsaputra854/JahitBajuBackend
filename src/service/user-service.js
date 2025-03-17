@@ -173,7 +173,7 @@ const get = async (id) => {
     },
     include : {
       address  : true
-    }
+    },
   });
 
   if (!user) {

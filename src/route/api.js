@@ -42,8 +42,67 @@ const lookOrderRouter = express.Router();
 const appFeatureRouter = express.Router();
 const lookAccessRouter = express.Router();
 
+/**
+ * @swagger
+ * /api/users/current:
+ *   get:
+ *     summary: Get current user
+ *     description: Mengambil data user dari database berdasarkan token autentikasi.
+ *     security:
+ *       - BearerAuth: []
+ *     tags:
+ *       - User
+ *     responses:
+ *       200:
+ *         description: Berhasil mendapatkan data user.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 1
+ *                     name:
+ *                       type: string
+ *                       example: "John Doe"
+ *                     email:
+ *                       type: string
+ *                       example: "johndoe@example.com"
+ *       401:
+ *         description: Unauthorized - Token tidak valid atau tidak dikirim.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Something went wrong"
+ */
 
-// Route for registering a new user
 userRouter.get("/api/users/current", authMiddleware, userController.get);
 
 // Route for verify a new user

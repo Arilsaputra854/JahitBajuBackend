@@ -18,6 +18,8 @@ const createOrder = async (body, buyerId, email, addressId) => {
 
   let orderItems = [];
 
+  console.log(body);
+
   if (body.cart_id) {
     // Fetch cart items for the buyer
     const cartItems = await prismaClient.cartItem.findMany({
@@ -81,8 +83,6 @@ const createOrder = async (body, buyerId, email, addressId) => {
         throw new ResponseError(400, `Custom Look with ID: ${body.look_id} not found.`);
       }
 
-      customPrice = body.price * body.quantity;
-
       orderItems.push({
         quantity: body.quantity,
         size: body.size,
@@ -145,7 +145,7 @@ const createOrder = async (body, buyerId, email, addressId) => {
       rtw_price: rtwPrice,
       packaging_price: body.packaging_price,
       shipping_price: body.shipping_price,
-      custom_price: customPrice,      
+      custom_price: body.custom_price,      
       discount: body.discount,
       total_price: totalPrice,
       buyer : {
