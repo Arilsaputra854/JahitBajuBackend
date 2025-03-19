@@ -72,7 +72,7 @@ const requestRemoveAccount = async (req, res, next) => {
     const id = req.user.id;
     const result = await userService.requestRemoveAccount(id);
     res.status(200).json({ 
-      error : false, data: result });
+      error : false, message: result });
   } catch (e) {
     next(e);
   }

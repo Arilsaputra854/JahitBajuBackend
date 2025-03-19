@@ -272,7 +272,7 @@ const requestRemoveAccount = async (id) => {
     `Halo ${user.name},\n\nKami telah menerima permintaan Anda untuk menghapus akun di Jahit Baju.\n\nJika Anda benar-benar ingin menghapus akun ini, harap balas email ini untuk mengonfirmasi. Setelah dikonfirmasi, akun Anda beserta semua data terkait akan dihapus secara permanen.\n\nJika Anda tidak merasa mengajukan permintaan ini, silakan abaikan email ini. Akun Anda akan tetap aktif seperti biasa.\n\nSalam,\nJahit Baju Official`
   );
 
-  return {"error" : false,"message": "Permintaan penghapusan akun berhasil diterima, Silakan cek email anda."};
+  return "Permintaan penghapusan akun berhasil diterima, Silakan cek email anda.";
 };
 
 // Email Sender Configuration
