@@ -6,6 +6,7 @@ const registerLookValidation = Joi.object({
   design_url: Joi.string().required(),
   features: Joi.array().items(Joi.string().max(50)).required(),
   description: Joi.string().max(1000).required(),
+  materials: Joi.array().required(),
   size: Joi.array()
     .items(Joi.string().valid("XS", "S", "M", "L", "XL", "XXL", "ALL SIZE"))
     .required(),
@@ -29,6 +30,7 @@ const updateLookValidation = Joi.object({
   design_url: Joi.string().required(),
   features: Joi.array().items(Joi.string().max(50)).optional(),
   description: Joi.string().max(1000).optional(),
+  materials: Joi.array().optional(),
   size: Joi.array()
     .items(Joi.string().valid("XS", "S", "M", "L", "XL", "XXL", "ALL SIZE"))
     .required(),

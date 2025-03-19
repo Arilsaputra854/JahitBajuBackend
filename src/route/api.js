@@ -42,73 +42,16 @@ const lookOrderRouter = express.Router();
 const appFeatureRouter = express.Router();
 const lookAccessRouter = express.Router();
 
-/**
- * @swagger
- * /api/users/current:
- *   get:
- *     summary: Get current user
- *     description: Mengambil data user dari database berdasarkan token autentikasi.
- *     security:
- *       - BearerAuth: []
- *     tags:
- *       - User
- *     responses:
- *       200:
- *         description: Berhasil mendapatkan data user.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                       example: 1
- *                     name:
- *                       type: string
- *                       example: "John Doe"
- *                     email:
- *                       type: string
- *                       example: "johndoe@example.com"
- *       401:
- *         description: Unauthorized - Token tidak valid atau tidak dikirim.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: "Unauthorized"
- *       500:
- *         description: Internal server error.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: "Something went wrong"
- */
-
+//route for get current user
 userRouter.get("/api/users/current", authMiddleware, userController.get);
 
 // Route for verify a new user
 userRouter.post("/api/users/current/verify-email",authMiddleware,  userController.verifyOTP);
 // Route for request new otp
 userRouter.post("/api/users/current/request-otp",authMiddleware, userController.requestOTP);
+
+// Route for verify a new user
+userRouter.post("/api/remove-account",authMiddleware,  userController.requestRemoveAccount);
 
 // Route for delete user
 userRouter.delete("/api/users/:id", authMiddleware, userController.remove);

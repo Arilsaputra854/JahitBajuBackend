@@ -65,6 +65,19 @@ const remove = async (req, res, next) => {
   }
 };
 
+
+//handle request remove user account
+const requestRemoveAccount = async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const result = await userService.requestRemoveAccount(id);
+    res.status(200).json({ 
+      error : false, data: result });
+  } catch (e) {
+    next(e);
+  }
+};
+
 //handle email verify OTP
 const verifyOTP = async (req, res, next) => {
   const otp = req.body.otp;
@@ -132,6 +145,7 @@ export default {
   get,
   update,
   remove,
+  requestRemoveAccount,
   verifyOTP,
   requestOTP,
   verifyResetOTP,

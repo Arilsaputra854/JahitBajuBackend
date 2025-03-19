@@ -296,6 +296,7 @@ model Look {
   designer    Designer     @relation(fields: [designer_id], references: [id], onDelete: Cascade)
   name        String
   features    Json?
+  materials      Json?    @default("[]")
   price       Float    @db.Float @default(0)
   look_price       Float    @db.Float @default(0)
   description String?

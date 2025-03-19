@@ -1,6 +1,6 @@
-import { response } from "express";
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
+import nodemailer from "nodemailer";
 import {
   getUserValidation,
   loginUserValidation,
@@ -171,8 +171,8 @@ const get = async (id) => {
     where: {
       id: id,
     },
-    include : {
-      address  : true
+    include: {
+      address: true,
     },
   });
 
@@ -200,7 +200,6 @@ const update = async (id, request) => {
     userData.password = await bcrypt.hash(userData.password, 10);
   }
 
-
   let addressUpdate = {};
 
   if (request.address) {
@@ -208,13 +207,13 @@ const update = async (id, request) => {
       address: {
         upsert: {
           create: {
-            street_address: request.address.street_address,            
+            street_address: request.address.street_address,
             city: Number(request.address.city),
             province: Number(request.address.province),
             postal_code: Number(request.address.postal_code),
           },
           update: {
-            street_address: request.address.street_address,      
+            street_address: request.address.street_address,
             city: Number(request.address.city),
             province: Number(request.address.province),
             postal_code: Number(request.address.postal_code),
@@ -255,12 +254,57 @@ const remove = async (id) => {
   });
 };
 
+
+const requestRemoveAccount = async (id) => {
+  id = validate(getUserValidation, id);
+
+  const user = await prismaClient.user.findUnique({
+    where: { id: id },
+  });
+
+  if (!user) {
+    throw new ResponseError(404, "User not found");
+  }
+
+  await sendEmailMessage(
+    user.email,
+    "Permintaan Penghapusan Akun",
+    `Halo ${user.name},\n\nKami telah menerima permintaan Anda untuk menghapus akun di Jahit Baju.\n\nJika Anda benar-benar ingin menghapus akun ini, harap balas email ini untuk mengonfirmasi. Setelah dikonfirmasi, akun Anda beserta semua data terkait akan dihapus secara permanen.\n\nJika Anda tidak merasa mengajukan permintaan ini, silakan abaikan email ini. Akun Anda akan tetap aktif seperti biasa.\n\nSalam,\nJahit Baju Official`
+  );
+
+  return {"error" : false,"message": "Permintaan penghapusan akun berhasil diterima, Silakan cek email anda."};
+};
+
+// Email Sender Configuration
+const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST, // host Email on ENV
+  port: process.env.EMAIL_PORT, // port Email on ENV
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER, // sender Email on ENV
+    pass: process.env.EMAIL_PASS, // sender Password on ENV
+  },
+});
+
+// sent Message to email 
+const sendEmailMessage = async (email,subject, message) => {
+  var mailOptions = {
+    from: `"Jahit Baju Official" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: subject,
+    text: message,
+  };
+
+  return transporter.sendMail(mailOptions);
+};
+
 export default {
   register,
   login,
   get,
   update,
   remove,
+  requestRemoveAccount,
   verifyOTP,
   requestOTP,
   verifyResetOTP,
