@@ -3,7 +3,7 @@ import { publicRouter } from "../route/public-api.js";
 import { errorMiddleware } from "../middleware/error-middleware.js";
 import { productRouter, userRouter, orderRouter, cartRouter, shippingRouter, packagingRouter, favoriteRoute, termConditionRoute, sizeGuideRoute, appBannerRouter, customDesignRouter, productTermsRouter, careGuideRoute, productNoteRouter, designerRouter, lookRouter, lookTextureRouter,appFeatureRouter, lookOrderRouter, lookAccessRouter } from "../route/api.js";
 import swaggerUi from "swagger-ui-express";
-import swaggerFile from "../swagger-output.json" assert { type: "json" }; // Pastikan path benar
+import swaggerFile from "../swagger-output.json" with { type: "json" }; // Pastikan path benar
 
 export const web = express();
 web.use(express.json({ limit: '20mb' }));

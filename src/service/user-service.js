@@ -58,20 +58,24 @@ const login = async (request) => {
     throw new ResponseError(401, "Email or password is invalid");
   }
 
-  const token = uuid().toString();
-  await prismaClient.user.update({
-    data: {
-      token: token,
-      last_update: new Date(),
-    },
-    where: {
-      email: user.email,
-    },
-  });
+  if (user.email_verified) {
+    const token = uuid().toString();
+    await prismaClient.user.update({
+      data: {
+        token: token,
+        last_update: new Date(),
+      },
+      where: {
+        email: user.email,
+      },
+    });
 
-  return {
-    token,
-  };
+    return {
+      token,
+    };
+  }else{
+    return user
+  }
 };
 
 const verifyOTP = async (userId, otp) => {
@@ -236,7 +240,6 @@ const update = async (id, request) => {
   });
 };
 
-
 // Delete user function
 const remove = async (id) => {
   id = validate(getUserValidation, id);
@@ -253,7 +256,6 @@ const remove = async (id) => {
     where: { id: id },
   });
 };
-
 
 const requestRemoveAccount = async (id) => {
   id = validate(getUserValidation, id);
@@ -286,8 +288,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// sent Message to email 
-const sendEmailMessage = async (email,subject, message) => {
+// sent Message to email
+const sendEmailMessage = async (email, subject, message) => {
   var mailOptions = {
     from: `"Jahit Baju Official" <${process.env.EMAIL_USER}>`,
     to: email,

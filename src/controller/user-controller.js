@@ -86,7 +86,8 @@ const verifyOTP = async (req, res, next) => {
   try {
     const result = await userService.verifyOTP(userId, otp);
     res.status(200).json({
-      message: result.message,
+      error : false,
+      token: result.token,
     });
   } catch (e) {
     next(e);

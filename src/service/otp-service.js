@@ -117,8 +117,6 @@ export const generateAndSendOTP = async (userId, email, type) => {
 
 // validate user OTP
 export const validateOTP = async (userId, otp, type) => {
-
-
   try {
 
     //find OTP on database
@@ -156,11 +154,13 @@ export const validateOTP = async (userId, otp, type) => {
 
       // handle email verified
     if(type == "EMAIL_VERIFICATION"){
+
+      const token = uuid().toString();
       await prismaClient.user.update({
         where: { id: userId },
-        data: { email_verified: true },
+        data: { email_verified: true, token : token},
       });
-
+      return {token : token}
       // handle reset password request
     }else if(type == "FORGOT_PASSWORD"){
           
