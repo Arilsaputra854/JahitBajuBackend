@@ -46,8 +46,10 @@ model User {
 model Address {
   id             String  @id @default(uuid())
   street_address String  @db.Text        // Nama jalan + detail rumah
-  city           Int? // Kota / Kabupaten
-  province       Int? // Provinsi
+  district           String? // kecamatan
+  village           String? // kelurahan
+  city           String? // Kota / Kabupaten
+  province       String? // Provinsi
   postal_code    Int? 
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt

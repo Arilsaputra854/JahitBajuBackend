@@ -212,15 +212,19 @@ const update = async (id, request) => {
         upsert: {
           create: {
             street_address: request.address.street_address,
-            city: Number(request.address.city),
-            province: Number(request.address.province),
-            postal_code: Number(request.address.postal_code),
+            city: request.address.city,
+            province: request.address.province,
+            postal_code: request.address.postal_code,
+            district : request.address.district,
+            village : request.address.village
           },
           update: {
             street_address: request.address.street_address,
-            city: Number(request.address.city),
-            province: Number(request.address.province),
-            postal_code: Number(request.address.postal_code),
+            city: request.address.city,
+            province: request.address.province,
+            postal_code: request.address.postal_code,
+            district : request.address.district,
+            village : request.address.village,
             updated_at: new Date(),
           },
         },

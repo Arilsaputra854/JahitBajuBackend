@@ -5,9 +5,11 @@ const addressValidation = Joi.object({
     rt: Joi.string().max(3).optional(), // RT opsional
     rw: Joi.string().max(3).optional(), // RW opsional
     subdistrict: Joi.string().max(100).optional(), // Kecamatan/Kelurahan
-    city: Joi.number().required(), // Kota/Kabupaten
-    province: Joi.number().required(), // Provinsi
-    postal_code: Joi.number().required(), // Kode pos opsional
+    city: Joi.string().required(), // Kota/Kabupaten
+    province: Joi.string().required(), // Provinsi
+    postal_code: Joi.number().required(), // kode pos
+    village: Joi.string().required(), // kode pos
+    district: Joi.string().required(), // kode pos
 });
 
 const registerUserValidation = Joi.object({

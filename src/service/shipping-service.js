@@ -88,11 +88,13 @@ const getShippingCost = async (body, user) => {
     where: { id: user.address_id },
   });
 
+  var cityCode = await findCityCode(address);
+
   //get cost of shipping
   try {
     const params = new URLSearchParams();
     params.append("origin", "457");
-    params.append("destination", address.city.toString());
+    params.append("destination", cityCode.toString());
     params.append("weight", body.total_weight.toString());
     params.append("courier", body.courier);
 
@@ -211,6 +213,20 @@ const getProvinceById = async (id) => {
     throw new ResponseError(500, "Cannot get list of provinces.");
   }
 };
+const findCityCode = async (address) => {
+  console.log("city : ", address.city.toString());
+
+  // Ambil daftar kota dari fungsi listCity()
+  const cities = await listCity();
+
+  // Cari city_id berdasarkan city_name
+  const city = cities.find(c => c.city_name.toLowerCase() === address.city.toLowerCase());
+
+  // Kembalikan city_id atau null jika tidak ditemukan
+  return city ? city.city_id : null;
+};
+
+
 
 // Retrieve list of City
 const listCity = async () => {
