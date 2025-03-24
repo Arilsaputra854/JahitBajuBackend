@@ -225,7 +225,7 @@ const createOrder = async (body, buyerId, email, addressId) => {
 // Get Order by ID
 const getOrder = async (buyer_id) => {
   const order = await prismaClient.order.findMany({
-    where: { id: buyer_id },
+    where: { buyer_id: buyer_id },
     select: {
       id: true,
       buyer_address : true,

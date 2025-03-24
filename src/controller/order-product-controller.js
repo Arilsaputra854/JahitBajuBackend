@@ -23,7 +23,7 @@ const createOrder = async (req, res, next) => {
 // Get Order by ID
 const getOrder = async (req, res, next) => {
     try {
-        const { buyerId } = req.body;
+        const buyerId = req.user.id;
         const result = await orderService.getOrder(buyerId);
         res.status(200).json({
             error: false,
