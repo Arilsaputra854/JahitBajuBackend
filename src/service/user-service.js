@@ -58,8 +58,7 @@ const login = async (request) => {
     throw new ResponseError(401, "Email or password is invalid");
   }
 
-  if (user.email_verified) {
-    const token = uuid().toString();
+  const token = uuid().toString();
     await prismaClient.user.update({
       data: {
         token: token,
@@ -73,9 +72,6 @@ const login = async (request) => {
     return {
       token,
     };
-  }else{
-    return user
-  }
 };
 
 const verifyOTP = async (userId, otp) => {

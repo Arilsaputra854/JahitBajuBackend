@@ -5,7 +5,7 @@ export const authMiddleware = async (req, res, next) => {
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({
-            errors: true,
+            error: true,
             message: "Unauthorized",
         }).end();
     }
@@ -18,7 +18,7 @@ export const authMiddleware = async (req, res, next) => {
 
     if (!user) {
         return res.status(401).json({
-            errors: true,
+            error: true,
             message: "Unauthorized",
         }).end();
     }
