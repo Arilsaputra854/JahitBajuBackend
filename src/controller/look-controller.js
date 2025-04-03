@@ -53,10 +53,10 @@ const remove = async (req, res, next) => {
     if(!id){
       throw new ResponseError(401,"look id is required.")
     }
-    await designerService.remove(id);
+    await lookService.remove(id);
     res.status(200).json({
       error: false,
-      data: "look deleted successfully.",
+      message: "look deleted successfully.",
     });
   } catch (e) {
     next(e);

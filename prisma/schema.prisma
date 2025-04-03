@@ -29,7 +29,7 @@ model User {
   role           String?  @default("User")
   last_update     DateTime @updatedAt @default(now()) 
 
-  orders        Order[]        @relation("UserOrders")
+  orders        Order[]        @relation("UserOrders" )
   carts         Cart[]         @relation("UserCarts") 
   favorites     Favorite[]     @relation("UserFavorites")
   look_access   LookAccess[]
@@ -177,7 +177,7 @@ model Order {
   payment_method  String?
   last_update     DateTime @updatedAt @default(now()) 
 
-  buyer     User        @relation(fields: [buyer_id], references: [id], name: "UserOrders")
+  buyer     User        @relation(fields: [buyer_id], references: [id], name: "UserOrders" )
   shipping  Shipping    @relation(fields: [shipping_id], references: [id], name: "ShippingOrders")
   packaging Packaging   @relation(fields: [packaging_id], references: [id], name: "PackagingOrders")
   items     OrderItem[] // Relasi One-to-Many ke OrderItem

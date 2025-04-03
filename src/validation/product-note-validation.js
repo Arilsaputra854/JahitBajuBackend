@@ -8,7 +8,6 @@ const addNoteProductValidation = Joi.object({
 const updateNoteProductValidation = Joi.object({
     id : Joi.string().required(),
     data: Joi.string().required(),
-    type: Joi.number().max(2).required(),
 });
 
 

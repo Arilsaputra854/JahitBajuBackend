@@ -28,6 +28,7 @@ const get = async (req, res, next) => {
       result = await productNoteService.getAll();
     }
 
+
     res.status(200).json({
       error: false,
       data: result,

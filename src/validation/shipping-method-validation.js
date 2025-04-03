@@ -10,6 +10,8 @@ const validateShippingMethod = Joi.object({
 
 const validateGetShippingMethod = Joi.object({
   total_weight: Joi.number().optional(),
+  destination: Joi.string().optional(),
+  origin: Joi.string().optional(),
 });
 
 const validateUpdateShippingMethod = Joi.object({

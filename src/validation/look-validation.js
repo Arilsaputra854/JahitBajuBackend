@@ -23,20 +23,21 @@ const registerLookValidation = Joi.object({
       })
     )
     .optional(),
+    weight : Joi.number().optional()
 });
 const updateLookValidation = Joi.object({
-  designer_id: Joi.number().integer().optional(),
+  designer_id: Joi.string().optional(),
   name: Joi.string().max(100).optional(),
-  design_url: Joi.string().required(),
+  design_url: Joi.string().optional(),
   features: Joi.array().items(Joi.string().max(50)).optional(),
   description: Joi.string().max(1000).optional(),
   materials: Joi.array().optional(),
   size: Joi.array()
     .items(Joi.string().valid("XS", "S", "M", "L", "XL", "XXL", "ALL SIZE"))
-    .required(),
+    .optional(),
   sold: Joi.number().integer().min(0).optional(),
   seen: Joi.number().integer().min(0).optional(),
-  look_price: Joi.number().integer().min(0).required(),
+  look_price: Joi.number().integer().min(0).optional(),
   price: Joi.number().integer().min(0).optional(),
   textures: Joi.array()
     .items(
@@ -47,6 +48,7 @@ const updateLookValidation = Joi.object({
       })
     )
     .optional(),
+    weight : Joi.number().optional()
 });
 
 export { registerLookValidation, updateLookValidation };

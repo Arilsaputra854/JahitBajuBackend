@@ -79,22 +79,29 @@ const listShippingMethods = async (body, user) => {
 
 // get shipping cost
 const getShippingCost = async (body, user) => {
-
-  if(!user.address_id){
-    throw new ResponseError(400, "user address is empty.");
-  }
-
-  let address = await prismaClient.address.findFirst({
+  let address;
+  if(user.address_id){
+    
+   address = await prismaClient.address.findFirst({
     where: { id: user.address_id },
   });
+  }
 
-  var cityCode = await findCityCode(address);
+  var destinationCode;
+  var originCode;
+
+  if(body.destination != null && body.origin != null){
+    originCode = await findCityCodeByCity(body.origin);
+    destinationCode = await findCityCodeByCity(body.destination);
+  }else{
+    cityCode = await findCityCode(address);
+  }
 
   //get cost of shipping
   try {
     const params = new URLSearchParams();
-    params.append("origin", "457");
-    params.append("destination", cityCode.toString());
+    params.append("origin", originCode ?? "457");
+    params.append("destination", destinationCode ?? cityCode.toString());
     params.append("weight", body.total_weight.toString());
     params.append("courier", body.courier);
 
@@ -214,13 +221,26 @@ const getProvinceById = async (id) => {
   }
 };
 const findCityCode = async (address) => {
-  console.log("city : ", address.city.toString());
 
   // Ambil daftar kota dari fungsi listCity()
   const cities = await listCity();
 
   // Cari city_id berdasarkan city_name
   const city = cities.find(c => c.city_name.toLowerCase() === address.city.toLowerCase());
+
+  // Kembalikan city_id atau null jika tidak ditemukan
+  return city ? city.city_id : null;
+};
+
+
+;
+const findCityCodeByCity = async (cityName) => {
+
+  // Ambil daftar kota dari fungsi listCity()
+  const cities = await listCity();
+
+  // Cari city_id berdasarkan city_name
+  const city = cities.find(c => c.city_name.toLowerCase() === cityName.toLowerCase());
 
   // Kembalikan city_id atau null jika tidak ditemukan
   return city ? city.city_id : null;

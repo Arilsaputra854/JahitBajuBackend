@@ -38,12 +38,6 @@ const getOrder = async (req, res, next) => {
 const updateOrder = async (req, res, next) => {
     try {
         const { id } = req.params;
-
-        const { error } = validateOrderItem(req.body);
-        if (error) {
-            return res.status(400).json({ error: true, message: error.details[0].message });
-        }
-
         const body = req.body;
 
         // Panggil service untuk update status

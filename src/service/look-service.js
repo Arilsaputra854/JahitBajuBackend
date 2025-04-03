@@ -41,7 +41,7 @@ const update = async (id,body) => {
     }
 
     return prismaClient.look.update({
-        where: { id:body.id },
+        where: { id:lookExists.id },
         data: {last_update: new Date(),
             ...body
         },

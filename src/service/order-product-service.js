@@ -268,6 +268,8 @@ const updateOrder = async (id, body) => {
     throw new ResponseError(404, "Order not found");
   }
 
+  console.log(body)
+
   return prismaClient.order.update({
     where: { id: id },
     data: {
@@ -279,7 +281,7 @@ const updateOrder = async (id, body) => {
       shipping_price: body.shipping_price || order.shipping_price,
       custom_price: body.custom_price || order.custom_price,
       discount : body.discount || order.discount,
-      total_price: body.total_price?.toString() || order.total_price,
+      total_price: body.total_price || order.total_price,
       order_status: body.order_status || order.order_status,
       last_update: new Date(),
       payment_url: body.payment_url || order.payment_url,
@@ -311,7 +313,11 @@ const removeOrder = async (id) => {
 
 // List Orders
 const listOrders = async () => {
-  return prismaClient.order.findMany();
+  return prismaClient.order.findMany({
+    include : {
+      items : true
+    }
+  });
 };
 
 export default {

@@ -14,7 +14,6 @@ const addTermCondition = async (body) => {
 
 const updateTermCondition = async (body) => {
   let termCondition = await prismaClient.termCondition.findFirst({
-    where: { id: body.id },
   });
 
   if (!termCondition)
@@ -22,10 +21,10 @@ const updateTermCondition = async (body) => {
 
   // Update the cart item
   const termConditionUpdated = await prismaClient.termCondition.update({
-    where: { id: body.id },
+    where: { id: termCondition.id },
     data: {
       last_update: new Date(),
-      ...body.data,
+      data : body.data
     },
   });
 

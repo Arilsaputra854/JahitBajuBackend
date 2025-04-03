@@ -20,6 +20,7 @@ import textureController from "../controller/texture-controller.js";
 import appFeatureController from "../controller/app-feature-controller.js";
 import orderLookController from "../controller/order-look-controller.js";
 import lookAccessController from "../controller/look-access-controller.js";
+import { adminAuthMiddleware } from "../middleware/admin-auth-middleware.js";
 
 const userRouter = express.Router();
 const productRouter = express.Router();
@@ -45,6 +46,10 @@ const lookAccessRouter = express.Router();
 //route for get current user
 userRouter.get("/api/users/current", authMiddleware, userController.get);
 
+
+//route for get user
+userRouter.get("/api/users/:id", authMiddleware, userController.getById);
+
 // Route for verify a new user
 userRouter.post("/api/users/current/verify-email",authMiddleware,  userController.verifyOTP);
 // Route for request new otp
@@ -54,19 +59,22 @@ userRouter.post("/api/users/current/request-otp",authMiddleware, userController.
 userRouter.post("/api/remove-account",authMiddleware,  userController.requestRemoveAccount);
 
 // Route for delete user
-userRouter.delete("/api/users/:id", authMiddleware, userController.remove);
+userRouter.delete("/api/users/:id", adminAuthMiddleware, userController.remove);
+
+// Route for delete user
+userRouter.get("/api/users/", adminAuthMiddleware, userController.list);
 
 // Route for update user
 userRouter.patch("/api/users/:id", authMiddleware, userController.update);
 
 // Route for registering a new product
-productRouter.post("/api/products", authMiddleware, productController.register);
+productRouter.post("/api/products", adminAuthMiddleware, productController.register);
 
 // Route for update details of a specific product by ID
-productRouter.patch("/api/products/:id", authMiddleware, productController.update);
+productRouter.patch("/api/products/:id", adminAuthMiddleware, productController.update);
 
 // Route for delete a specific product by ID
-productRouter.delete("/api/products/:id", authMiddleware, productController.remove);
+productRouter.delete("/api/products/:id", adminAuthMiddleware, productController.remove);
 
 
 
@@ -74,10 +82,10 @@ productRouter.delete("/api/products/:id", authMiddleware, productController.remo
 productNoteRouter.get("/api/product-note", authMiddleware, productNoteController.get);
 
 // Route for registering a new product note
-productNoteRouter.post("/api/product-note", authMiddleware, productNoteController.add);
+productNoteRouter.post("/api/product-note", adminAuthMiddleware, productNoteController.add);
 
 // Route for update product note
-productNoteRouter.patch("/api/product-notes", authMiddleware, productNoteController.update);
+productNoteRouter.patch("/api/product-notes", adminAuthMiddleware, productNoteController.update);
 
 
 
@@ -120,29 +128,29 @@ cartRouter.delete("/api/cart/item/:itemId", authMiddleware, cartController.remov
 
 
 // Route for updating a shipping
-shippingRouter.post("/api/shipping/", authMiddleware, shippingMethodController.add);
+shippingRouter.post("/api/shipping/", adminAuthMiddleware, shippingMethodController.add);
 
 // Route for get a shipping
 shippingRouter.get("/api/shipping/", authMiddleware, shippingMethodController.get);
 
 // Route for get all Shipping method
-shippingRouter.post("/api/shippings/", authMiddleware,shippingMethodController.get);
+shippingRouter.post("/api/shippings/", adminAuthMiddleware,shippingMethodController.get);
 
 // Route for updating a shipping
-shippingRouter.patch("/api/shipping/", authMiddleware, shippingMethodController.update);
+shippingRouter.patch("/api/shipping/", adminAuthMiddleware, shippingMethodController.update);
 
 // Route for deleting a shipping
-shippingRouter.delete("/api/shipping/", authMiddleware, shippingMethodController.remove);
+shippingRouter.delete("/api/shipping/", adminAuthMiddleware, shippingMethodController.remove);
 
 
 // Route for post a packaging
-packagingRouter.post("/api/packaging/", authMiddleware, packagingController.add);
+packagingRouter.post("/api/packaging/", adminAuthMiddleware, packagingController.add);
 
 // Route for updating a packaging
-packagingRouter.patch("/api/packaging/", authMiddleware, packagingController.update);
+packagingRouter.patch("/api/packaging/", adminAuthMiddleware, packagingController.update);
 
 // Route for deleting a packaging
-packagingRouter.delete("/api/packaging/", authMiddleware, packagingController.remove);
+packagingRouter.delete("/api/packaging/", adminAuthMiddleware, packagingController.remove);
 
 // Route for get a packaging
 packagingRouter.get("/api/packaging/", authMiddleware, packagingController.get);
@@ -151,10 +159,10 @@ packagingRouter.get("/api/packaging/", authMiddleware, packagingController.get);
 
 
 // Route for post a packaging
-favoriteRoute.post("/api/favorite/", authMiddleware, favoriteController.addFavorite);
+favoriteRoute.post("/api/favorite/", adminAuthMiddleware, favoriteController.addFavorite);
 
 // Route for deleting a packaging
-favoriteRoute.delete("/api/favorite/", authMiddleware, favoriteController.removeFavorite);
+favoriteRoute.delete("/api/favorite/", adminAuthMiddleware, favoriteController.removeFavorite);
 
 // Route for get a packaging
 favoriteRoute.get("/api/favorite/", authMiddleware, favoriteController.getFavorite);
@@ -168,77 +176,80 @@ favoriteRoute.get("/api/favorites/", authMiddleware, favoriteController.getAllFa
 
 
 // Route for add a term condition
-termConditionRoute.post("/api/term-condition/", authMiddleware, termConditionController.add);
+termConditionRoute.post("/api/term-condition/", adminAuthMiddleware, termConditionController.add);
 // Route for update a term condition
-termConditionRoute.patch("/api/term-condition/", authMiddleware, termConditionController.update);
+termConditionRoute.patch("/api/term-condition/", adminAuthMiddleware, termConditionController.update);
 
 
 
 // Route for add a product term
-productTermsRouter.post("/api/product-terms/", authMiddleware, productTermsController.add);
+productTermsRouter.post("/api/product-terms/", adminAuthMiddleware, productTermsController.add);
 // Route for update a product term
-productTermsRouter.patch("/api/product-terms/", authMiddleware, productTermsController.update);
+productTermsRouter.patch("/api/product-terms/", adminAuthMiddleware, productTermsController.update);
 
 
 // Route for add a size guide
-sizeGuideRoute.post("/api/size-guide/", authMiddleware, sizeGuideController.add);
+sizeGuideRoute.post("/api/size-guide/", adminAuthMiddleware, sizeGuideController.add);
 // Route for update a size guide
-sizeGuideRoute.patch("/api/size-guide/", authMiddleware, sizeGuideController.update);
+sizeGuideRoute.patch("/api/size-guide/", adminAuthMiddleware, sizeGuideController.update);
 
 
 
 // Route for add a care guide
-sizeGuideRoute.post("/api/care-guide", authMiddleware, careGuideController.add);
+sizeGuideRoute.post("/api/care-guide", adminAuthMiddleware, careGuideController.add);
 // Route for update a care guide
-sizeGuideRoute.patch("/api/care-guide/:id", authMiddleware, careGuideController.update);
+sizeGuideRoute.patch("/api/care-guide/", adminAuthMiddleware, careGuideController.update);
 
 
 // Route for add a app banner
-appBannerRouter.post("/api/app-banner/", authMiddleware, appBannerController.add);
+appBannerRouter.post("/api/app-banner/", adminAuthMiddleware, appBannerController.add);
 // Route for update a app banner
-appBannerRouter.patch("/api/app-banner/", authMiddleware, appBannerController.update);
+appBannerRouter.patch("/api/app-banner/", adminAuthMiddleware, appBannerController.update);
 // Route for delete a app banner
-appBannerRouter.delete("/api/app-banner/", authMiddleware, appBannerController.remove);
+appBannerRouter.delete("/api/app-banner/", adminAuthMiddleware, appBannerController.remove);
 
 
 // Route for add a designer
-designerRouter.post("/api/designer", authMiddleware, designerController.register);
+designerRouter.post("/api/designer", adminAuthMiddleware, designerController.register);
 
 // Route for update a designer
-designerRouter.patch("/api/designer", authMiddleware, designerController.update);
+designerRouter.patch("/api/designer", adminAuthMiddleware, designerController.update);
 
 // Route for update a designer
-designerRouter.delete("/api/designer", authMiddleware, designerController.remove);
+designerRouter.delete("/api/designer", adminAuthMiddleware, designerController.remove);
 
 // Route for add a custom design
-customDesignRouter.post("/api/order/custom-design/", authMiddleware, customDesignController.add);
+customDesignRouter.post("/api/order/custom-design/", adminAuthMiddleware, customDesignController.add);
 
 
 // Route for add a designer
-lookRouter.post("/api/designer/look", authMiddleware, lookController.register);
+lookRouter.post("/api/designer/look", adminAuthMiddleware, lookController.register);
 
 // Route for update a designer
-lookRouter.patch("/api/designer/look", authMiddleware, lookController.update);
+lookRouter.patch("/api/designer/look", adminAuthMiddleware, lookController.update);
+
+// Route for delete a designer
+lookRouter.delete("/api/designer/look", adminAuthMiddleware, lookController.remove);
 
 
 // Route for add a texture for look
-lookTextureRouter.post("/api/designer/look/texture", authMiddleware, textureController.register);
+lookTextureRouter.post("/api/designer/look/texture", adminAuthMiddleware, textureController.register);
 
 // Route for update a texture for look
-lookTextureRouter.patch("/api/designer/look/texture", authMiddleware, textureController.update);
+lookTextureRouter.patch("/api/designer/look/texture", adminAuthMiddleware, textureController.update);
 
 
 // Route for add feature 
-appFeatureRouter.post("/api/app-feature", authMiddleware, appFeatureController.createFeature);
+appFeatureRouter.post("/api/app-feature", adminAuthMiddleware, appFeatureController.createFeature);
 
 // Route for update feature 
-appFeatureRouter.patch("/api/app-feature", authMiddleware, appFeatureController.updateFeature);
+appFeatureRouter.patch("/api/app-feature", adminAuthMiddleware, appFeatureController.updateFeature);
 
 // Route for buy feature 
-appFeatureRouter.post("/api/app-feature/buy", authMiddleware, appFeatureController.buyFeature);
+appFeatureRouter.post("/api/app-feature/buy", adminAuthMiddleware, appFeatureController.buyFeature);
 
 // Route for get buy feature 
-appFeatureRouter.get("/api/app-feature/buy/:id", authMiddleware, appFeatureController.getOrderFeature);
+appFeatureRouter.get("/api/app-feature/buy/:id", adminAuthMiddleware, appFeatureController.getOrderFeature);
 
 
 // Route for buy look

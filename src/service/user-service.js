@@ -164,6 +164,26 @@ const verifyResetOTP = async (body) => {
   }
 };
 
+
+const getById = async (id) => {
+  id = validate(getUserValidation, id);
+
+  const user = await prismaClient.user.findUnique({
+    where: {
+      id: id,
+    },
+    include: {
+      address: true,
+    },
+  });
+
+  if (!user) {
+    throw new ResponseError(404, "User is not found");
+  }
+
+  return user;
+};
+
 const get = async (id) => {
   id = validate(getUserValidation, id);
 
@@ -178,6 +198,23 @@ const get = async (id) => {
 
   if (!user) {
     throw new ResponseError(404, "User is not found");
+  }
+
+  return user;
+};
+
+
+
+const list = async (id) => {
+
+  const user = await prismaClient.user.findMany({
+    include: {
+      address: true,
+    },
+  });
+
+  if (!user) {
+    throw new ResponseError(404, "User is empty");
   }
 
   return user;
@@ -251,10 +288,60 @@ const remove = async (id) => {
   if (!user) {
     throw new ResponseError(404, "User not found");
   }
+  // Hapus data yang berelasi terlebih dahulu
+  await prismaClient.favorite.deleteMany({
+    where: {user_id: id },
+  });
 
+  const cart =  await prismaClient.cart.findFirst({
+    where: { buyer_id: id },
+  });
+  if(cart){
+
+  await prismaClient.cartItem.deleteMany({
+    where : {
+      cart_id : cart.id
+    }
+  })
+
+  await prismaClient.cart.deleteMany({
+    where : {
+      buyer_id : id
+    }
+  })
+  }
+
+  await prismaClient.order.deleteMany({
+    where: { buyer_id: id },
+  });
+
+  await prismaClient.oTP.deleteMany({
+    where: { user_id: id },
+  });
+
+  await prismaClient.userFeature.deleteMany({
+    where: { user_id: id },
+  });
+
+  await prismaClient.featureOrder.deleteMany({
+    where: { buyer_id: id },
+  });
+
+  await prismaClient.lookOrder.deleteMany({
+    where: { buyer_id: id },
+  });
+
+  if (user.address_id) {
+    await prismaClient.address.delete({
+      where: { id: user.address_id },
+    });
+  }
+
+  // Hapus akun user
   return prismaClient.user.delete({
     where: { id: id },
   });
+
 };
 
 const requestRemoveAccount = async (id) => {
@@ -303,7 +390,9 @@ const sendEmailMessage = async (email, subject, message) => {
 export default {
   register,
   login,
+  list,
   get,
+  getById,
   update,
   remove,
   requestRemoveAccount,

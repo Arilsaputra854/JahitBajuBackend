@@ -41,6 +41,21 @@ const get = async (req, res, next) => {
   }
 };
 
+
+//handle fetch specific user request
+const list = async (req, res, next) => {
+  try {
+    const result = await userService.list();
+    res.status(200).json({
+      error : false,
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+
 //handle user update data request
 const update = async (req, res, next) => {
   try {
@@ -56,7 +71,7 @@ const update = async (req, res, next) => {
 //handle remove user account request
 const remove = async (req, res, next) => {
   try {
-    const id = req.user.id;
+    const id = req.params.id;
     const result = await userService.remove(id);
     res.status(200).json({ 
       error : false, data: result });
@@ -64,6 +79,20 @@ const remove = async (req, res, next) => {
     next(e);
   }
 };
+
+
+//handle remove user account request
+const getById = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const result = await userService.getById(id);
+    res.status(200).json({ 
+      error : false, data: result });
+  } catch (e) {
+    next(e);
+  }
+};
+
 
 
 //handle request remove user account
@@ -144,6 +173,8 @@ export default {
   register,
   login,
   get,
+  getById,
+  list,
   update,
   remove,
   requestRemoveAccount,

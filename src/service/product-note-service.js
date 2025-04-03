@@ -59,10 +59,14 @@ const getAll = async () => {
 const getRtw = async () => {    
 
     let productNote = await prismaClient.productNote.findFirst({
-        select: { id: true, data: true, type : 1 },
+        where: { type: 1 },
+        select: { id: true, data: true},
     });
 
+    console.log("rtw")
     if (!productNote) throw new ResponseError(404, "product note not found.");
+
+    console.log(productNote)
     return productNote;
 };
 
@@ -70,10 +74,14 @@ const getRtw = async () => {
 const getCustome = async () => {    
 
     let productNote = await prismaClient.productNote.findFirst({
-        select: { id: true, data: true, type : 2 },
+        where: { type: 2 },
+        select: { id: true, data: true},
     });
 
+
     if (!productNote) throw new ResponseError(404, "product note not found.");
+
+    console.log(productNote)
     return productNote;
 };
 

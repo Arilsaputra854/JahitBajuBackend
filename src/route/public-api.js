@@ -15,6 +15,7 @@ import designerController from "../controller/designer-controller.js";
 import lookController from "../controller/look-controller.js";
 import textureController from "../controller/texture-controller.js";
 import appFeatureController from "../controller/app-feature-controller.js";
+import adminController from "../controller/admin-controller.js";
 
 
 const publicRouter = express.Router()
@@ -24,6 +25,7 @@ publicRouter.post('/webhook/payment', xenditController.createOrder)
 publicRouter.post("/api/users/register", userController.register)
 publicRouter.post("/api/users/login", userController.login)
 
+publicRouter.post("/api/admin/login", adminController.login)
 
 // Route for verify forgot password otp
 publicRouter.post("/api/users/verify-reset-otp",  userController.verifyResetOTP);
