@@ -32,8 +32,9 @@ const get = async (req, res, next) => {
 };
 
 const update = async (req, res, next) => {
+  const id = req.query.id;
   try {
-    const result = await packagingService.updatePackaging(req.body);
+    const result = await packagingService.updatePackaging(id,req.body);
     res.status(200).json({ error: false, data: result });
   } catch (e) {
     next(e);
@@ -41,11 +42,15 @@ const update = async (req, res, next) => {
 };
 
 const remove = async (req, res, next) => {
+
   try {
-    await packagingService.removePackaging(req.body);
+
+    const id= req.query.id;
+    console.log(id);
+    await packagingService.removePackaging(id);
     res.status(200).json({
       error: false,
-      data: "Packaging delete successfuly",
+      message: "Packaging delete successfuly",
     });
   } catch (e) {
     next(e);

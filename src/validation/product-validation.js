@@ -14,7 +14,7 @@ const registerProductValidation = Joi.object({
     category: Joi.array().items(Joi.string().max(50)).required(),
     size: Joi.array().items(Joi.string().valid("XS", "S", "M", "L", "XL", "XXL", "ALL SIZE")).required(),
     colors: Joi.array().optional(),
-    features: Joi.array().items(Joi.string().max(50)).optional(),
+    materials: Joi.array().items(Joi.string()).optional(),
 });
 
 const getProductValidation = Joi.string().max(100).required();
@@ -33,7 +33,7 @@ const updateProductValidation = Joi.object({
     category: Joi.array().items(Joi.string().max(50)).optional(),
     size: Joi.array().items(Joi.string().valid("XS", "S", "M", "L", "XL", "XXL", "ALL SIZE")).optional(),
     colors: Joi.array().items(Joi.string()).optional(),
-    features: Joi.array().items(Joi.string().max(50)).optional(),
+    materials: Joi.array().items(Joi.string()).optional(),
 });
 
 

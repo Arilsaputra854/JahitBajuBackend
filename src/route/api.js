@@ -55,6 +55,9 @@ userRouter.post("/api/users/current/verify-email",authMiddleware,  userControlle
 // Route for request new otp
 userRouter.post("/api/users/current/request-otp",authMiddleware, userController.requestOTP);
 
+
+userRouter.post("/api/users/activate/:id",adminAuthMiddleware, userController.activate);
+
 // Route for verify a new user
 userRouter.post("/api/remove-account",authMiddleware,  userController.requestRemoveAccount);
 
@@ -69,6 +72,10 @@ userRouter.patch("/api/users/:id", authMiddleware, userController.update);
 
 // Route for registering a new product
 productRouter.post("/api/products", adminAuthMiddleware, productController.register);
+
+
+// Route for registering a new product
+productRouter.get("/api/all-products/", adminAuthMiddleware, productController.getAll);
 
 // Route for update details of a specific product by ID
 productRouter.patch("/api/products/:id", adminAuthMiddleware, productController.update);
@@ -134,7 +141,7 @@ shippingRouter.post("/api/shipping/", adminAuthMiddleware, shippingMethodControl
 shippingRouter.get("/api/shipping/", authMiddleware, shippingMethodController.get);
 
 // Route for get all Shipping method
-shippingRouter.post("/api/shippings/", adminAuthMiddleware,shippingMethodController.get);
+shippingRouter.post("/api/shippings/", authMiddleware,shippingMethodController.get);
 
 // Route for updating a shipping
 shippingRouter.patch("/api/shipping/", adminAuthMiddleware, shippingMethodController.update);
@@ -159,10 +166,10 @@ packagingRouter.get("/api/packaging/", authMiddleware, packagingController.get);
 
 
 // Route for post a packaging
-favoriteRoute.post("/api/favorite/", adminAuthMiddleware, favoriteController.addFavorite);
+favoriteRoute.post("/api/favorite/", authMiddleware, favoriteController.addFavorite);
 
 // Route for deleting a packaging
-favoriteRoute.delete("/api/favorite/", adminAuthMiddleware, favoriteController.removeFavorite);
+favoriteRoute.delete("/api/favorite/", authMiddleware, favoriteController.removeFavorite);
 
 // Route for get a packaging
 favoriteRoute.get("/api/favorite/", authMiddleware, favoriteController.getFavorite);

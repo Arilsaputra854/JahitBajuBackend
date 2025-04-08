@@ -32,6 +32,19 @@ const get = async (req, res, next) => {
 };
 
 
+const getAll = async (req, res, next) => {
+  try { 
+    const result = await productService.listAllProduct();
+    res.status(200).json({
+      error: false,
+      data: result,
+    });
+  } catch (e) {
+    next(e); // Pass the error to the error-handling middleware
+  }
+};
+
+
 const getLatest = async (req, res, next) => {
   try {
     
@@ -72,6 +85,7 @@ const remove = async (req, res, next) => {
 export default {
   register,
   get,
+  getAll,
   getLatest,
   update,
   remove,

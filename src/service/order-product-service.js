@@ -1,15 +1,29 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 import shippingService from "./shipping-service.js";
-import { v4 as uuid } from "uuid";
 import dotenv from 'dotenv';
 
 dotenv.config();
-
-
 import axios from "axios"; // Import axios untuk request ke API Xendit
 
 const XENDIT_SECRET_KEY = process.env.XENDIT_API // Ganti dengan Secret Key Anda
+
+
+async function generateOrderId(prisma) {
+  const today = new Date();
+  const ddMMyy = today.toLocaleDateString("id-ID").split("/").join("").slice(0, 6);
+
+  const sequence = await prisma.orderSequence.upsert({
+    where: { id: 1 },
+    update: { lastNumber: { increment: 1 } },
+    create: { id: 1, lastNumber: 1 },
+  });
+
+  const paddedNumber = String(sequence.lastNumber).padStart(10, "0");
+  return `JB-${paddedNumber}-${ddMMyy}`;
+}
+
+
 
 const createOrder = async (body, buyerId, email, addressId) => {
   const totalPrice = body.total_price || 0;
@@ -17,8 +31,6 @@ const createOrder = async (body, buyerId, email, addressId) => {
   let customPrice = body.custom_price|| 0;
 
   let orderItems = [];
-
-  console.log(body);
 
   if (body.cart_id) {
     // Fetch cart items for the buyer
@@ -109,9 +121,7 @@ const createOrder = async (body, buyerId, email, addressId) => {
         size: body.size,
         price: product.price || 0,
         custom_design: body.custom_design,
-        product: {
-          connect: { id: body.product_id },
-        },
+        product_id: body.product_id
       });
     }
   } else {
@@ -133,40 +143,75 @@ const createOrder = async (body, buyerId, email, addressId) => {
     responseProvince,
     responseCity.postal_code
   ];
-
-  
   const address = addressParts.filter(Boolean).join(', ');
 
+  const customId = await generateOrderId(prismaClient); 
   // Create order with associated items
-  const order = await prismaClient.order.create({
-    data: {
-      id: uuid(),
-      buyer_address: address,
-      rtw_price: rtwPrice,
-      packaging_price: body.packaging_price,
-      shipping_price: body.shipping_price,
-      custom_price: body.custom_price,      
-      discount: body.discount,
-      total_price: totalPrice,
-      buyer : {
-        connect : {id : buyerId}
+  const order = await prismaClient.$transaction(async (tx) => {
+  
+    for (const item of orderItems) {
+      console.log(item)
+      if (item.product_id) {
+        const product = await tx.product.findUnique({
+          where: { id: item.product_id },
+        });
+  
+        if (!product) {
+          throw new ResponseError(404, `product is not found`);
+        }
+  
+        if (product.stock < item.quantity) {
+          throw new ResponseError(400, `product stock is not enogh`);
+        }
+  
+        const tr = await tx.product.update({
+          where: { id: item.product_id },
+          data: {
+            stock: {
+              decrement: item.quantity,
+            },
+            last_update : new Date()
+          },
+        });
+
+        console.log(tr)
+      }
+    }
+  
+
+    const createdOrder = await tx.order.create({
+      data: {
+        id: customId,
+        buyer_address: address,
+        rtw_price: rtwPrice,
+        packaging_price: body.packaging_price,
+        shipping_price: body.shipping_price,
+        custom_price: customPrice,
+        discount: body.discount,
+        total_price: totalPrice,
+        buyer: {
+          connect: { id: buyerId },
+        },
+        shipping: {
+          connect: { id: body.shipping_id },
+        },
+        packaging: {
+          connect: { id: body.packaging_id },
+        },
+        order_created: body.order_created || new Date(),
+        order_status: body.order_status || "WAITING FOR PAYMENT",
+        last_update: new Date(),
+        resi: body.resi,
+        description: body.description,
+        items: {
+          create: orderItems,
+        },
       },
-      shipping : {
-        connect : {id : body.shipping_id}
-      },
-      packaging : {
-        connect : {id : body.packaging_id}
-      },
-      order_created: body.order_created || new Date(),
-      order_status: body.order_status || "WAITING FOR PAYMENT",
-      last_update: new Date(),
-      resi: body.resi,
-      description: body.description,
-      items: {
-        create: orderItems,
-      },
-    },
+    });
+  
+    return createdOrder;
   });
+  
   
 
   // ===== Integrasi ke Xendit =====

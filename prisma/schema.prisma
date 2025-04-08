@@ -28,6 +28,7 @@ model User {
   custom_access  Boolean? @default(false)
   role           String?  @default("User")
   last_update     DateTime @updatedAt @default(now()) 
+  delete_at     DateTime? 
 
   orders        Order[]        @relation("UserOrders" )
   carts         Cart[]         @relation("UserCarts") 
@@ -148,6 +149,7 @@ model Packaging {
   description String @db.VarChar(100)
   price       Float  @db.Float
   last_update     DateTime @updatedAt @default(now()) 
+  delete_at   DateTime? 
 
   orders Order[] @relation("PackagingOrders")
 
@@ -426,4 +428,10 @@ model LookOrder {
   buyer     User        @relation(fields: [buyer_id], references: [id], name: "UserLookOrders")
 
   @@map("look_orders")
+}
+
+model OrderSequence {
+  id         Int      @id @default(1)
+  lastNumber Int
+  updatedAt  DateTime @updatedAt
 }

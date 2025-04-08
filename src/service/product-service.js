@@ -100,11 +100,17 @@ const list = async () => {
     
     return products;
   };
+
+
+const listAllProduct = async () => {
+    return await prismaClient.product.findMany();
+  };
   
 
 export default {
     register,
     get,
+    listAllProduct,
     update,
     remove,
     list,

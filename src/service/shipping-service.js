@@ -89,6 +89,7 @@ const getShippingCost = async (body, user) => {
 
   var destinationCode;
   var originCode;
+  var cityCode;
 
   if(body.destination != null && body.origin != null){
     originCode = await findCityCodeByCity(body.origin);

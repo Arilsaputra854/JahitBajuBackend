@@ -25,6 +25,18 @@ const addFavorite = async (request) => {
     },
   });
 
+   await prismaClient.product.update({
+    where : {
+      id : favorite.product_id
+    },
+    data: {
+      favorite : {
+        increment : 1
+      },
+      last_update : new Date()
+    },
+  });
+
   return favorite;
 };
 
@@ -55,9 +67,24 @@ const removeFavorite = async (id) => {
     throw new ResponseError(404, "Favorite data not found.");
   }
 
-  return prismaClient.favorite.delete({
+  const favoriteProduct =  prismaClient.favorite.delete({
     where: { id: id },
   });
+
+
+  await prismaClient.product.update({
+    where : {
+      id : favorite.product_id
+    },
+    data: {
+      favorite : {
+        decrement : 1
+      },
+      last_update : new Date()
+    },
+  });
+
+  return favoriteProduct;
 };
 
 // List Orders

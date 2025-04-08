@@ -31,12 +31,12 @@ const addPackaging = async (req) => {
 
 
 
-const updatePackaging = async (req) => {
+const updatePackaging = async (id, req) => {
 
     var body = validate(validatePostPackaging, req);
 
     let packaging = await prismaClient.packaging.findFirst({
-        where: { id : body.id }
+        where: { id : id }
     });
 
 
@@ -52,7 +52,7 @@ const updatePackaging = async (req) => {
 
     // Update the cart item
     const updatedPackagingMethod = await prismaClient.packaging.update({
-        where: { id : body.id },
+        where: { id : id },
         data: updateData,
         select: {
             id: true,
@@ -68,19 +68,20 @@ const updatePackaging = async (req) => {
 
 const listPackagings = async () => {
     return prismaClient.packaging.findMany({        
-        select: { id: true, name: true, price:true, description : true},
+        select: { id: true, name: true, price:true, description : true}, where : {
+            delete_at : null
+        },
     });
 };
 
 
-const removePackaging = async (body) => {
+const removePackaging = async (id) => {
 
-    validate(validatePostPackaging, body);
-
-    const packaging = await prismaClient.shipping.findFirst({ where: { name : body.name } });
+    const packaging = await prismaClient.packaging.findFirst({ where: { id : id } });
     if (!packaging) throw new ResponseError(404, "Packaging not found");
 
-    return prismaClient.packaging.delete({ where: { name: body.name } });
+    return prismaClient.packaging.update({ where: { id : id}, data : { delete_at : new Date()
+    } });
 };
 
 // Retrieve specific packaging
