@@ -10,7 +10,7 @@ import favoriteController from "../controller/favorite-controller.js";
 import termConditionController from "../controller/term-condition-controller.js";
 import sizeGuideController from "../controller/size-guide-controller.js";
 import appBannerController from "../controller/app-banner-controller.js";
-import customDesignController from "../controller/custom-design-controller.js";
+import customDesignUploadController from "../controller/upload-file-controller.js";
 import productTermsController from "../controller/product-terms-controller.js";
 import careGuideController from "../controller/care-guide-controller.js";
 import productNoteController from "../controller/product-note-controller.js";
@@ -21,6 +21,7 @@ import appFeatureController from "../controller/app-feature-controller.js";
 import orderLookController from "../controller/order-look-controller.js";
 import lookAccessController from "../controller/look-access-controller.js";
 import { adminAuthMiddleware } from "../middleware/admin-auth-middleware.js";
+import uploadFileController from "../controller/upload-file-controller.js";
 
 const userRouter = express.Router();
 const productRouter = express.Router();
@@ -33,7 +34,7 @@ const termConditionRoute = express.Router();
 const sizeGuideRoute = express.Router();
 const careGuideRoute = express.Router();
 const appBannerRouter = express.Router();
-const customDesignRouter = express.Router();
+const uploadRouter = express.Router();
 const productTermsRouter = express.Router();
 const lookTextureRouter = express.Router();
 const productNoteRouter = express.Router();
@@ -211,9 +212,9 @@ sizeGuideRoute.patch("/api/care-guide/", adminAuthMiddleware, careGuideControlle
 // Route for add a app banner
 appBannerRouter.post("/api/app-banner/", adminAuthMiddleware, appBannerController.add);
 // Route for update a app banner
-appBannerRouter.patch("/api/app-banner/", adminAuthMiddleware, appBannerController.update);
+appBannerRouter.patch("/api/app-banner/:id", adminAuthMiddleware, appBannerController.update);
 // Route for delete a app banner
-appBannerRouter.delete("/api/app-banner/", adminAuthMiddleware, appBannerController.remove);
+appBannerRouter.delete("/api/app-banner/:id", adminAuthMiddleware, appBannerController.remove);
 
 
 // Route for add a designer
@@ -225,8 +226,23 @@ designerRouter.patch("/api/designer", adminAuthMiddleware, designerController.up
 // Route for update a designer
 designerRouter.delete("/api/designer", adminAuthMiddleware, designerController.remove);
 
+
+
 // Route for add a custom design
-customDesignRouter.post("/api/order/custom-design/", adminAuthMiddleware, customDesignController.add);
+uploadRouter.post("/api/upload/custom-design", authMiddleware, uploadFileController.customDesign);
+
+// Route for add a custom design
+uploadRouter.post("/api/upload/app-banner", authMiddleware, uploadFileController.appBanner);
+
+// Route for add a product image
+uploadRouter.post("/api/upload/product-image", adminAuthMiddleware, uploadFileController.productImage);
+
+// Route for add a look design
+uploadRouter.post("/api/upload/look-design", adminAuthMiddleware, uploadFileController.lookDesign);
+
+// Route for add a look texture
+uploadRouter.post("/api/upload/look-texture", adminAuthMiddleware, uploadFileController.lookTexture);
+
 
 
 // Route for add a designer
@@ -245,6 +261,8 @@ lookTextureRouter.post("/api/designer/look/texture", adminAuthMiddleware, textur
 // Route for update a texture for look
 lookTextureRouter.patch("/api/designer/look/texture", adminAuthMiddleware, textureController.update);
 
+// Route for update a texture for look
+lookTextureRouter.delete("/api/designer/look/texture", adminAuthMiddleware, textureController.remove);
 
 // Route for add feature 
 appFeatureRouter.post("/api/app-feature", adminAuthMiddleware, appFeatureController.createFeature);
@@ -280,7 +298,7 @@ export {
     careGuideRoute,
     termConditionRoute,
     appBannerRouter,
-    customDesignRouter,
+    uploadRouter,
     productTermsRouter,
     lookTextureRouter,
     productNoteRouter,

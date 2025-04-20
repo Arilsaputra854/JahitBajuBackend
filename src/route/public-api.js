@@ -8,7 +8,7 @@ import xenditController from "../controller/xendit-controller.js";
 import termConditionController from "../controller/term-condition-controller.js";
 import sizeGuideController from "../controller/size-guide-controller.js";
 import appBannerController from "../controller/app-banner-controller.js";
-import customDesignController from "../controller/custom-design-controller.js";
+import customDesignUploadController from "../controller/upload-file-controller.js";
 import productTermsController from "../controller/product-terms-controller.js";
 import careGuideController from "../controller/care-guide-controller.js";
 import designerController from "../controller/designer-controller.js";
@@ -16,6 +16,7 @@ import lookController from "../controller/look-controller.js";
 import textureController from "../controller/texture-controller.js";
 import appFeatureController from "../controller/app-feature-controller.js";
 import adminController from "../controller/admin-controller.js";
+import uploadFileController from "../controller/upload-file-controller.js";
 
 
 const publicRouter = express.Router()
@@ -49,6 +50,10 @@ publicRouter.get("/api/favorites", favoriteController.getAllFavorites);
 // Route for getting term & condition also privacy policy
 publicRouter.get("/api/term-condition", termConditionController.get);
 
+
+// Route for getting term & condition also privacy policy
+publicRouter.get("/api/term-condition/html", termConditionController.getHtml);
+
 // Route for getting product term
 publicRouter.get("/api/product-terms", productTermsController.get);
 
@@ -62,10 +67,10 @@ publicRouter.get("/api/care-guide", careGuideController.get);
 
 
 // Route for get a app banner
-publicRouter.get("/api/app-banner/", appBannerController.get);
+publicRouter.get("/api/app-banner", appBannerController.get);
 
 // Route for get custom design
-publicRouter.get("/api/order/custom-design/:filename", customDesignController.get);
+publicRouter.get("/api/upload/:filename", uploadFileController.get);
 
 
 // Route for get a designer

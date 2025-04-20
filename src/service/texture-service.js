@@ -12,21 +12,13 @@ const register = async (body) => {
         description: body.description,
       },
     });
-
-    const lookTexture = await prisma.lookTexture.create({
-      data: {
-        look_id: body.look_id,
-        texture_id: texture.id,
-      },
-    });
-
-    return { texture, lookTexture };
+    return texture;
   });
 };
 
-const get = async (body) => {
+const get = async (id) => {
   const texture = await prismaClient.texture.findUnique({
-    where: { id: body.id },
+    where: { id: id },
   });
 
   if (!texture) {

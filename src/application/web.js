@@ -1,7 +1,7 @@
 import express from "express"
 import { publicRouter } from "../route/public-api.js";
 import { errorMiddleware } from "../middleware/error-middleware.js";
-import { productRouter, userRouter, orderRouter, cartRouter, shippingRouter, packagingRouter, favoriteRoute, termConditionRoute, sizeGuideRoute, appBannerRouter, customDesignRouter, productTermsRouter, careGuideRoute, productNoteRouter, designerRouter, lookRouter, lookTextureRouter,appFeatureRouter, lookOrderRouter, lookAccessRouter } from "../route/api.js";
+import { productRouter, userRouter, orderRouter, cartRouter, shippingRouter, packagingRouter, favoriteRoute, termConditionRoute, sizeGuideRoute, appBannerRouter, uploadRouter, productTermsRouter, careGuideRoute, productNoteRouter, designerRouter, lookRouter, lookTextureRouter,appFeatureRouter, lookOrderRouter, lookAccessRouter } from "../route/api.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerFile from "../swagger-output.json" with { type: "json" }; // Pastikan path benar
 import cors from "cors"
@@ -23,7 +23,7 @@ web.use(termConditionRoute)
 web.use(sizeGuideRoute)
 web.use(careGuideRoute)
 web.use(appBannerRouter)
-web.use(customDesignRouter)
+web.use(uploadRouter)
 web.use(productTermsRouter)
 web.use(lookTextureRouter)
 web.use(productNoteRouter)

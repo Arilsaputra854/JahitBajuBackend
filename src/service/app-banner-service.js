@@ -4,10 +4,13 @@ import { ResponseError } from "../error/response-error.js";
 
 const addAppBanner = async (body) => {
 
+    if(body.link  == null)
+        body.link = "-"
+
     var appBanner = await prismaClient.appBanner.create({
         data: {
-            image_url : body.image_url,
-            link : body.link            
+            image_url : body.image_url ,
+            link : body.link        
         },
     });
 
@@ -16,10 +19,10 @@ const addAppBanner = async (body) => {
 
 
 
-const updateAppBanner = async (body) => {
+const updateAppBanner = async (id, body) => {
 
     let appBanner = await prismaClient.appBanner.findFirst({
-        where: { id : body.id }
+        where: { id : id }
     });
 
 
@@ -28,7 +31,7 @@ const updateAppBanner = async (body) => {
 
     // Update the app banner
     const appBannerUpdated = await prismaClient.appBanner.update({
-        where: { id : body.id },
+        where: { id : id },
         data: {
             image_url: body.image_url,
             link: body.link,
@@ -64,10 +67,10 @@ const getAllAppBanner = async () => {
 
 
 
-const deleteAppBanner = async (body) => {
+const deleteAppBanner = async (id) => {
 
     let appBanner = await prismaClient.appBanner.findFirst({
-        where: { id : body.id }
+        where: { id : id }
     });
 
 
@@ -75,7 +78,7 @@ const deleteAppBanner = async (body) => {
     
 
     return await prismaClient.appBanner.delete({
-        where: { id : body.id },
+        where: { id : id },
     });
 };
 

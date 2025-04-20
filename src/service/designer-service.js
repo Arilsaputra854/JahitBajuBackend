@@ -20,13 +20,9 @@ const get = async (id) => {
         where: { id: id },
         include: {
             looks: {
-                include: {
-                    textures: {
-                        include: {
-                            texture: true
-                        }
-                    }
-                }
+                where : {
+                    delete_at : null
+                },
             }
         }
     });
@@ -70,16 +66,9 @@ const remove = async (id) => {
 
 const list = async () => {
     return prismaClient.designer.findMany({
-        include: {
-            looks: {
-                include: {
-                    textures: {
-                        include: {
-                            texture: true
-                        }
-                    }
-                }
-            }
+        
+        where: {
+            delete_at : null
         }
     });
 };

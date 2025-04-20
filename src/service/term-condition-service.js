@@ -42,8 +42,19 @@ const getTermCondition = async (body) => {
   return termCondition;
 };
 
+
+const getHtmlTermCondition = async (body) => {
+  let termCondition = await prismaClient.termCondition.findFirst({
+    where: { id: body.id },
+  });
+
+  if (!termCondition)
+    throw new ResponseError(404, "Term & Condition not found");
+  return termCondition.data;
+};
 export default {
   addTermCondition,
+  getHtmlTermCondition,
   updateTermCondition,
   getTermCondition,
 };

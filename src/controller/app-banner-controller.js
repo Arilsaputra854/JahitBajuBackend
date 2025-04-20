@@ -1,5 +1,5 @@
 import appBannerService from "../service/app-banner-service.js";
-import { validateAddAppBanner, validateDeleteAppBanner, validateUpdateAppBanner } from "../validation/app-banner-validation.js";
+import { validateAddAppBanner, validateUpdateAppBanner } from "../validation/app-banner-validation.js";
 import { validate } from "../validation/validation.js";
 
 
@@ -19,7 +19,7 @@ const add = async (req, res, next) => {
 
 const get = async (req, res, next) => {
     try {
-        const { id } = req.query;
+        const  id  = req.query.id;
         var result;
         if(id){ 
             result = await appBannerService.getAppBanner(id);
@@ -38,8 +38,9 @@ const get = async (req, res, next) => {
 
 const update = async (req, res, next) => {
     try {
+        const  id  = req.params.id;
         const body = validate(validateUpdateAppBanner, req.body)
-        const result = await appBannerService.updateAppBanner(body);
+        const result = await appBannerService.updateAppBanner(id,body);
         res.status(200).json({error : false, data: result });
     } catch (e) {
         next(e);
@@ -49,8 +50,8 @@ const update = async (req, res, next) => {
 
 const remove = async (req, res, next) => {
     try {
-        const body = validate(validateDeleteAppBanner, req.body)
-        const result = await appBannerService.deleteAppBanner(req.body);
+        const  id  = req.params.id;
+        const result = await appBannerService.deleteAppBanner(id);
         res.status(200).json({error : false, data: result });
     } catch (e) {
         next(e);

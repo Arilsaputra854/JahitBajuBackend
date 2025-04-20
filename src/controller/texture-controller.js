@@ -18,7 +18,7 @@ const register = async (req, res, next) => {
 
 const get = async (req, res, next) => {
   try {
-    const { id } = req.query;    
+    const  id  = req.query.id;    
 
     let result;
     if (id) {      
@@ -37,7 +37,7 @@ const get = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   try {
-    const { id } = req.query;
+    const id = req.query.id;
     const body = validate(updateTextureValidation, req.body);
     const result = await textureService.update(id, body);
     res.status(200).json({ error: false, data: result });
@@ -48,7 +48,7 @@ const update = async (req, res, next) => {
 
 const remove = async (req, res, next) => {
   try {
-    const { id } = req.query;
+    const id = req.query.id;
     if(!id){
       throw new ResponseError(401,"texture id is required.")
     }

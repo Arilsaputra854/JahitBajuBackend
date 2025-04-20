@@ -93,6 +93,7 @@ model Product {
   features    Json?    @default("[]")
   enable    Boolean?   @default(true)
   last_update DateTime @updatedAt @default(now()) 
+  delete_at     DateTime?  
   
   orderItems OrderItem[] @relation("ProductOrderItem")
   favorites  Favorite[]  @relation("ProductFavorites")
@@ -288,6 +289,7 @@ model Designer {
   description  String
   looks Look[]
   last_update     DateTime @updatedAt @default(now()) 
+  delete_at DateTime?
 
   @@map("designers")
 }
@@ -308,9 +310,9 @@ model Look {
   weight      Int          @default(0)
   sold        Int          @default(0)
   seen        Int          @default(0)
-  textures    LookTexture[]
   look_access LookAccess[]
-  last_update     DateTime @updatedAt @default(now()) 
+  last_update     DateTime @updatedAt @default(now())
+  delete_at     DateTime?  
 
   
   orderItems OrderItem[] @relation("LookOrderItem")
@@ -332,19 +334,6 @@ model LookAccess {
   @@map("look_user_access")
 }
 
-model LookTexture {
-  id        String @id @default(uuid()) @db.VarChar(100)
-  look_id    String
-  texture_id String   @db.VarChar(100)
-
-  look      Look     @relation(fields: [look_id], references: [id], onDelete: Cascade)
-  texture   Texture  @relation(fields: [texture_id], references: [id], onDelete: Cascade)
-
-  last_update     DateTime @updatedAt @default(now()) 
-  @@map("look_textures")
-}
-
-
 model Texture {
   id           String  @id @default(uuid()) @db.VarChar(100)
   title        String  @db.VarChar(100)
@@ -352,8 +341,6 @@ model Texture {
   hex          String? @db.VarChar(7)
   description    String? @db.Text
   last_update     DateTime @updatedAt @default(now()) 
-
-  looks       LookTexture[]  
 
   @@map("textures")
 }
